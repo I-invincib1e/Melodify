@@ -31,7 +31,7 @@ export default function MusicCard({ id, name, title, image, type, subtitle, isRo
   return (
     <button
       onClick={handleClick}
-      className={`group flex-shrink-0 w-[160px] md:w-[180px] bg-[#181818]/60 hover:bg-[#282828] rounded-lg p-3 transition-all duration-300 text-left cursor-pointer ${className || ""}`}
+      className={`group flex-shrink-0 w-[160px] md:w-[180px] neuglass hover:bg-white/5 rounded-2xl p-3 transition-all duration-300 text-left cursor-pointer shadow-none ${className || ""}`}
     >
       <div className="relative mb-3">
         <img
@@ -44,7 +44,7 @@ export default function MusicCard({ id, name, title, image, type, subtitle, isRo
         />
         {/* Play button overlay */}
         <div className="absolute right-2 bottom-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 drop-shadow-xl">
-          <div className="w-11 h-11 rounded-full bg-[#1DB954] flex items-center justify-center shadow-2xl shadow-black/50 hover:scale-105 transition-transform hover:bg-[#1ed760]">
+          <div className="w-11 h-11 rounded-full bg-primary flex items-center justify-center shadow-2xl shadow-primary/40 hover:scale-105 transition-transform hover:brightness-110">
             <Play size={20} fill="black" className="text-black ml-0.5" />
           </div>
         </div>

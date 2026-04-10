@@ -18,9 +18,9 @@ export default function Sidebar() {
   return (
     <aside className="hidden md:flex flex-col w-[280px] shrink-0 h-full gap-2 p-2">
       {/* Logo + Nav */}
-      <div className="bg-[#121212] rounded-lg px-4 py-5">
+      <div className="neuglass rounded-2xl px-4 py-5 shadow-none border-none">
         <div className="flex items-center gap-2.5 mb-6 px-1">
-          <div className="w-8 h-8 rounded-full bg-[#1DB954] flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0">
             <Music2 size={16} className="text-black" strokeWidth={2.5} />
           </div>
           <span className="text-[17px] font-bold tracking-tight">Melodify</span>
@@ -47,7 +47,7 @@ export default function Sidebar() {
       </div>
 
       {/* Library */}
-      <div className="bg-[#121212] rounded-lg flex-1 overflow-hidden flex flex-col">
+      <div className="neuglass rounded-2xl flex-1 overflow-hidden flex flex-col shadow-none border-none">
         <div className="flex items-center gap-3 px-5 pt-4 pb-2 text-[#b3b3b3]">
           <Library size={20} />
           <span className="text-sm font-semibold">Your Library</span>
@@ -104,7 +104,7 @@ export default function Sidebar() {
                   loading="lazy"
                 />
                 <div className="min-w-0 flex-1">
-                  <p className={`text-sm font-medium truncate ${isCurrent ? "text-[#1DB954]" : "text-white"}`}>
+                  <p className={`text-sm font-medium truncate ${isCurrent ? "text-primary" : "text-white"}`}>
                     {decodeHtml(song.name)}
                   </p>
                   <p className="text-[11px] text-[#a7a7a7] truncate">

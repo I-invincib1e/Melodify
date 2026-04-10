@@ -65,7 +65,7 @@ export default function CardGrid({ items, title, type, onPlay }: Props) {
                   loading="lazy"
                 />
                 <div className="absolute right-2 bottom-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                  <div className="w-10 h-10 rounded-full bg-[#1DB954] flex items-center justify-center shadow-xl hover:scale-105 transition-transform hover:bg-[#1ed760]">
+                  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-xl hover:scale-105 transition-transform hover:brightness-110">
                     <Play size={20} fill="black" className="text-black ml-0.5" />
                   </div>
                 </div>

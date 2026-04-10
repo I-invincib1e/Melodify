@@ -33,9 +33,9 @@ export default function QueuePage() {
           <div className="flex items-center gap-3 px-4 py-3 bg-white/[0.05] rounded-lg border border-white/[0.04]">
             {isPlaying ? <Equalizer /> : <div className="w-3" />}
             <img src={getHighQualityImage(currentSong.image)} alt=""
-              className={`w-14 h-14 rounded-md object-cover shadow-lg transition-shadow ${isPlaying ? "shadow-[#1DB954]/20" : ""}`} />
+              className={`w-14 h-14 rounded-md object-cover shadow-lg transition-shadow ${isPlaying ? "shadow-primary/20" : ""}`} />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-[#1DB954] truncate">{decodeHtml(currentSong.name)}</p>
+              <p className="text-sm font-semibold text-primary truncate">{decodeHtml(currentSong.name)}</p>
               <p className="text-xs text-[#a7a7a7] truncate mt-0.5">
                 {currentSong.artists?.primary?.map((a) => decodeHtml(a.name)).join(", ")}
               </p>

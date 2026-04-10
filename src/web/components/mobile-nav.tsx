@@ -22,7 +22,7 @@ export default function MobileNav() {
               className="relative flex flex-col items-center gap-0.5 py-1.5 px-5"
             >
               {isActive && (
-                <span className="absolute -top-1.5 w-4 h-[2px] rounded-full bg-[#1DB954]" />
+                <span className="absolute -top-1.5 w-4 h-[2px] rounded-full bg-primary" />
               )}
               <Icon size={22} className={isActive ? "text-white" : "text-[#727272]"} strokeWidth={isActive ? 2.2 : 1.8} />
               <span className={`text-[10px] font-medium ${isActive ? "text-white" : "text-[#727272]"}`}>{label}</span>

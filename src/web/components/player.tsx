@@ -59,8 +59,8 @@ export default function Player() {
     return (
       <>
         <audio ref={audioRef} />
-        <div className="fixed bottom-0 left-0 right-0 h-[72px] md:h-[80px] glass border-t border-white/5 flex items-center justify-center z-50">
-          <p className="text-[#727272] text-sm">Search & play a song to get started</p>
+        <div className="fixed bottom-4 left-4 right-4 md:left-1/2 md:-translate-x-1/2 md:max-w-4xl h-[72px] md:h-[80px] neuglass rounded-2xl flex items-center justify-center z-50">
+          <p className="text-[#9ba1ad] text-sm font-medium">Search & play a song to get started</p>
         </div>
       </>
     );
@@ -99,7 +99,7 @@ export default function Player() {
               />
               {isBuffering && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-lg">
-                  <div className="w-10 h-10 border-2 border-white/20 border-t-[#1DB954] rounded-full animate-spin" />
+                  <div className="w-10 h-10 border-2 border-white/20 border-t-primary rounded-full animate-spin" />
                 </div>
               )}
             </div>
@@ -128,7 +128,7 @@ export default function Player() {
 
             {/* Controls */}
             <div className="flex items-center justify-between">
-              <button onClick={toggleShuffle} className={`p-2 ${shuffle ? "text-[#1DB954]" : "text-[#b3b3b3]"}`}>
+              <button onClick={toggleShuffle} className={`p-2 ${shuffle ? "text-primary" : "text-[#b3b3b3]"}`}>
                 <Shuffle size={22} />
               </button>
               <button onClick={prevTrack} className="text-white p-2">
@@ -141,7 +141,7 @@ export default function Player() {
               <button onClick={nextTrack} className="text-white p-2">
                 <SkipForward size={28} fill="currentColor" />
               </button>
-              <button onClick={toggleRepeat} className={`p-2 ${repeat !== "off" ? "text-[#1DB954]" : "text-[#b3b3b3]"}`}>
+              <button onClick={toggleRepeat} className={`p-2 ${repeat !== "off" ? "text-primary" : "text-[#b3b3b3]"}`}>
                 {repeat === "one" ? <Repeat1 size={22} /> : <Repeat size={22} />}
               </button>
             </div>
@@ -156,22 +156,27 @@ export default function Player() {
     <>
       <audio ref={audioRef} onTimeUpdate={handleTimeUpdate} onLoadedMetadata={handleLoadedMetadata} onEnded={handleEnded} onWaiting={handleWaiting} onCanPlay={handleCanPlay} />
 
-      {/* Progress bar on very top of player (thin green line) */}
-      <div className="fixed bottom-[72px] md:bottom-[80px] left-0 right-0 h-[2px] bg-white/5 z-50">
-        <div className="h-full bg-[#1DB954] transition-all duration-200" style={{ width: `${progress}%` }} />
-      </div>
+      <div className="fixed bottom-4 left-4 right-4 md:left-1/2 md:-translate-x-1/2 md:w-[800px] h-[72px] md:h-[80px] neuglass rounded-2xl z-50">
+        {/* Ambient background progress fill */}
+        <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+          <div className="absolute top-0 left-0 bottom-0 bg-gradient-to-r from-primary/20 via-primary/5 to-transparent transition-all duration-200" style={{ width: `${progress}%` }} />
+        </div>
 
-      <div className="fixed bottom-0 left-0 right-0 h-[72px] md:h-[80px] glass border-t border-white/5 z-50 px-3 md:px-4">
-        <div className="flex items-center h-full gap-3">
+        {/* Glossy top edge highlight */}
+        <div className="absolute top-0 left-6 right-6 h-[2px] bg-white/5 rounded-b-lg overflow-hidden pointer-events-none">
+          <div className="h-full bg-primary/80 shadow-[0_0_8px_var(--color-primary)] transition-all duration-200" style={{ width: `${progress}%` }} />
+        </div>
+
+        <div className="relative flex items-center h-full gap-3 pt-1 px-3 md:px-5">
           {/* Left — Song info (clickable to expand on mobile) */}
           <button className="flex items-center gap-3 min-w-0 flex-1 md:flex-none md:w-[30%] text-left" onClick={() => setFullScreen(true)}>
             {image && (
               <div className="relative shrink-0">
                 <img src={image} alt={songName}
-                  className={`w-12 h-12 md:w-14 md:h-14 rounded-md object-cover shadow-lg transition-all duration-500 ${isPlaying ? "shadow-[#1DB954]/20" : ""}`} />
+                  className={`w-12 h-12 md:w-14 md:h-14 rounded-md object-cover shadow-lg transition-all duration-500 ${isPlaying ? "shadow-primary/20" : ""}`} />
                 {isBuffering && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-md">
-                    <div className="w-5 h-5 border-2 border-white/20 border-t-[#1DB954] rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-2 border-white/20 border-t-primary rounded-full animate-spin" />
                   </div>
                 )}
               </div>
@@ -197,7 +202,7 @@ export default function Player() {
           {/* Center — Controls (desktop) */}
           <div className="hidden md:flex flex-col items-center flex-1 max-w-[45%] gap-1">
             <div className="flex items-center gap-5">
-              <button onClick={toggleShuffle} className={`p-1 transition-colors ${shuffle ? "text-[#1DB954]" : "text-[#b3b3b3] hover:text-white"}`}>
+              <button onClick={toggleShuffle} className={`p-1 transition-colors ${shuffle ? "text-primary" : "text-[#b3b3b3] hover:text-white"}`}>
                 <Shuffle size={16} />
               </button>
               <button onClick={prevTrack} className="text-[#b3b3b3] hover:text-white transition-colors p-1">
@@ -209,14 +214,14 @@ export default function Player() {
               <button onClick={nextTrack} className="text-[#b3b3b3] hover:text-white transition-colors p-1">
                 <SkipForward size={18} fill="currentColor" />
               </button>
-              <button onClick={toggleRepeat} className={`p-1 transition-colors ${repeat !== "off" ? "text-[#1DB954]" : "text-[#b3b3b3] hover:text-white"}`}>
+              <button onClick={toggleRepeat} className={`p-1 transition-colors ${repeat !== "off" ? "text-primary" : "text-[#b3b3b3] hover:text-white"}`}>
                 {repeat === "one" ? <Repeat1 size={16} /> : <Repeat size={16} />}
               </button>
             </div>
             <div className="flex items-center gap-2 w-full">
               <span className="text-[10px] text-[#a7a7a7] w-9 text-right tabular-nums">{formatDuration(currentTime)}</span>
               <Slider value={[currentTime]} max={duration || 100} step={1} onValueChange={([v]) => seekTo(v)}
-                className="flex-1 [&_[data-slot=slider-track]]:h-1 [&_[data-slot=slider-track]]:bg-[#4d4d4d] [&_[data-slot=slider-range]]:bg-white hover:[&_[data-slot=slider-range]]:bg-[#1DB954] [&_[data-slot=slider-thumb]]:w-3 [&_[data-slot=slider-thumb]]:h-3 [&_[data-slot=slider-thumb]]:opacity-0 hover:[&_[data-slot=slider-thumb]]:opacity-100 [&_[data-slot=slider-thumb]]:bg-white [&_[data-slot=slider-thumb]]:border-0" />
+                className="flex-1 [&_[data-slot=slider-track]]:h-1 [&_[data-slot=slider-track]]:bg-[#4d4d4d] [&_[data-slot=slider-range]]:bg-white hover:[&_[data-slot=slider-range]]:bg-primary [&_[data-slot=slider-thumb]]:w-3 [&_[data-slot=slider-thumb]]:h-3 [&_[data-slot=slider-thumb]]:opacity-0 hover:[&_[data-slot=slider-thumb]]:opacity-100 [&_[data-slot=slider-thumb]]:bg-white [&_[data-slot=slider-thumb]]:border-0" />
               <span className="text-[10px] text-[#a7a7a7] w-9 tabular-nums">{formatDuration(duration)}</span>
             </div>
           </div>
@@ -231,7 +236,7 @@ export default function Player() {
               {isMuted || volume === 0 ? <VolumeX size={16} /> : volume < 0.5 ? <Volume1 size={16} /> : <Volume2 size={16} />}
             </button>
             <Slider value={[isMuted ? 0 : volume]} max={1} step={0.01} onValueChange={([v]) => setVolume(v)}
-              className="w-24 [&_[data-slot=slider-track]]:h-1 [&_[data-slot=slider-track]]:bg-[#4d4d4d] [&_[data-slot=slider-range]]:bg-white hover:[&_[data-slot=slider-range]]:bg-[#1DB954] [&_[data-slot=slider-thumb]]:w-3 [&_[data-slot=slider-thumb]]:h-3 [&_[data-slot=slider-thumb]]:opacity-0 hover:[&_[data-slot=slider-thumb]]:opacity-100 [&_[data-slot=slider-thumb]]:bg-white [&_[data-slot=slider-thumb]]:border-0" />
+              className="w-24 [&_[data-slot=slider-track]]:h-1 [&_[data-slot=slider-track]]:bg-[#4d4d4d] [&_[data-slot=slider-range]]:bg-white hover:[&_[data-slot=slider-range]]:bg-primary [&_[data-slot=slider-thumb]]:w-3 [&_[data-slot=slider-thumb]]:h-3 [&_[data-slot=slider-thumb]]:opacity-0 hover:[&_[data-slot=slider-thumb]]:opacity-100 [&_[data-slot=slider-thumb]]:bg-white [&_[data-slot=slider-thumb]]:border-0" />
             <button onClick={() => setFullScreen(true)} className="text-[#b3b3b3] hover:text-white transition-colors p-1.5">
               <Maximize2 size={14} />
             </button>

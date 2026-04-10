@@ -50,7 +50,7 @@ export default function LikedPage() {
           <>
             <div className="flex items-center gap-4 py-4">
               <button onClick={playAll}
-                className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#1DB954] flex items-center justify-center hover:scale-105 transition-transform hover:bg-[#1ed760] shadow-lg shadow-[#1DB954]/20">
+                className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary flex items-center justify-center hover:scale-105 transition-transform hover:brightness-110 shadow-lg shadow-primary/20">
                 <Play size={22} fill="black" className="text-black ml-0.5" />
               </button>
               <button onClick={shufflePlay}

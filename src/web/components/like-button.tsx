@@ -18,7 +18,7 @@ export default function LikeButton({ song, size = 18, className = "" }: Props) {
         e.stopPropagation();
         toggleLike(song);
       }}
-      className={`transition-all duration-200 ${liked ? "text-[#1DB954] scale-110" : "text-[#b3b3b3] hover:text-white hover:scale-110"} ${className}`}
+      className={`transition-all duration-200 ${liked ? "text-primary scale-110" : "text-[#b3b3b3] hover:text-white hover:scale-110"} ${className}`}
       title={liked ? "Remove from Liked" : "Save to Liked"}
     >
       <Heart size={size} fill={liked ? "currentColor" : "none"} />

@@ -44,7 +44,7 @@ export default function SongRow({ song, index = 0, queue, showAlbumArt = true, s
         ) : (
           <>
             {showIndex && (
-              <span className={`text-sm tabular-nums group-hover:hidden ${isCurrentSong ? "text-[#1DB954]" : "text-[#b3b3b3]"}`}>
+              <span className={`text-sm tabular-nums group-hover:hidden ${isCurrentSong ? "text-primary" : "text-[#b3b3b3]"}`}>
                 {index + 1}
               </span>
             )}
@@ -69,7 +69,7 @@ export default function SongRow({ song, index = 0, queue, showAlbumArt = true, s
 
       {/* Song info */}
       <div className="flex-1 min-w-0">
-        <p className={`text-sm font-medium truncate leading-tight ${isCurrentSong ? "text-[#1DB954]" : "text-white"}`}>
+        <p className={`text-sm font-medium truncate leading-tight ${isCurrentSong ? "text-primary" : "text-white"}`}>
           {songName}
         </p>
         <div className="flex items-center gap-1.5 mt-0.5">

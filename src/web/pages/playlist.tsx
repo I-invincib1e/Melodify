@@ -38,7 +38,7 @@ export default function PlaylistPage() {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] animate-fade-in">
         <p className="text-white text-lg font-semibold">Playlist not found</p>
-        <button onClick={() => setLocation("/")} className="text-[#1DB954] mt-3 text-sm font-medium hover:underline">Go home</button>
+        <button onClick={() => setLocation("/")} className="text-primary mt-3 text-sm font-medium hover:underline">Go home</button>
       </div>
     );
   }
@@ -80,7 +80,7 @@ export default function PlaylistPage() {
       <div className="px-4 md:px-6">
         <div className="flex items-center gap-4 py-4">
           <button onClick={playAll}
-            className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#1DB954] flex items-center justify-center hover:scale-105 transition-transform hover:bg-[#1ed760] shadow-lg shadow-[#1DB954]/20">
+            className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary flex items-center justify-center hover:scale-105 transition-transform hover:brightness-110 shadow-lg shadow-primary/20">
             <Play size={22} fill="black" className="text-black ml-0.5" />
           </button>
         </div>
