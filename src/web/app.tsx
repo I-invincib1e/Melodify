@@ -1,7 +1,6 @@
 import { Route, Switch, useLocation } from "wouter";
 import { useEffect, useRef } from "react";
 import { Provider } from "./components/provider";
-import { AgentFeedback, RunableBadge } from "@runablehq/website-runtime";
 import Sidebar from "./components/sidebar";
 import Player from "./components/player";
 import MobileNav from "./components/mobile-nav";
@@ -48,8 +47,6 @@ function App() {
       </div>
       <MobileNav />
       <Player />
-      {import.meta.env.DEV && <AgentFeedback />}
-      {<RunableBadge />}
     </Provider>
   );
 }
