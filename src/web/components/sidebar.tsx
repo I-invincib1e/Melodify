@@ -1,6 +1,7 @@
 import { useLocation } from "wouter";
-import { Home, Search, Library, Heart, Clock, Music2 } from "lucide-react";
+import { Home, Search, Library, Heart, Clock, Music2, Users } from "lucide-react";
 import { useRecentStore, useLikedStore, usePlayerStore } from "@/lib/store";
+import { usePartyStore } from "@/lib/partyStore";
 import { getHighQualityImage, decodeHtml } from "@/lib/api";
 import Equalizer from "./equalizer";
 
@@ -9,6 +10,16 @@ export default function Sidebar() {
   const { recentSongs } = useRecentStore();
   const { likedSongs } = useLikedStore();
   const { currentSong, isPlaying, playSong } = usePlayerStore();
+  const { roomId, hostParty, joinParty, leaveParty, partyUsers } = usePartyStore();
+
+  const handlePartyAction = () => {
+    if (roomId) leaveParty();
+    else {
+      const code = prompt("Enter Room Code to join, or leave blank to Host:");
+      if (code) joinParty(code.toUpperCase());
+      else hostParty();
+    }
+  };
 
   const navItems = [
     { icon: Home, label: "Home", path: "/" },
@@ -44,6 +55,22 @@ export default function Sidebar() {
             );
           })}
         </nav>
+
+        {/* Watch Party Quick Action */}
+        <div className="mt-4 pt-4 border-t border-white/5">
+          <button 
+            onClick={handlePartyAction}
+            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-md text-sm font-semibold transition-all duration-200 ${
+              roomId ? "bg-primary/20 text-primary shadow-[0_0_10px_var(--color-primary)]" : "bg-white/5 text-[#b3b3b3] hover:text-white hover:bg-white/10"
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <Users size={20} />
+              {roomId ? `Room: ${roomId}` : "Listen Along"}
+            </div>
+            {roomId && <span className="text-[10px] bg-primary text-black px-1.5 py-0.5 rounded-full">{partyUsers}</span>}
+          </button>
+        </div>
       </div>
 
       {/* Library */}

@@ -4,6 +4,8 @@ import { getHighQualityImage, formatDuration, decodeHtml } from "@/lib/api";
 import { Slider } from "@/components/ui/slider";
 import LikeButton from "./like-button";
 import Equalizer from "./equalizer";
+import CanvasVisualizer from "./canvas-visualizer";
+import KaraokeView from "./karaoke-view";
 import {
   Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Repeat1,
   Volume2, VolumeX, Volume1, ListMusic, ChevronDown, ChevronUp, Maximize2
@@ -71,13 +73,18 @@ export default function Player() {
   const songName = decodeHtml(currentSong.name);
   const progress = duration ? (currentTime / duration) * 100 : 0;
 
-  // ─── Fullscreen Player ───
-  if (isFullScreenPlayer) {
-    return (
-      <>
-        <audio ref={audioRef} onTimeUpdate={handleTimeUpdate} onLoadedMetadata={handleLoadedMetadata} onEnded={handleEnded} onWaiting={handleWaiting} onCanPlay={handleCanPlay} />
+  // ─── Player Render ───
+  return (
+    <>
+      <audio ref={audioRef} crossOrigin="anonymous" onTimeUpdate={handleTimeUpdate} onLoadedMetadata={handleLoadedMetadata} onEnded={handleEnded} onWaiting={handleWaiting} onCanPlay={handleCanPlay} />
+      
+      {isFullScreenPlayer ? (
         <div className="fixed inset-0 z-[100] flex flex-col animate-slide-up"
-          style={{ background: `linear-gradient(180deg, #1a1a1a 0%, #000 100%)` }}>
+          style={{ background: `linear-gradient(180deg, #1e2028 0%, #0c0d12 100%)` }}>
+          
+          {/* Immersive Backgrounds */}
+          <CanvasVisualizer />
+
           {/* Top bar */}
           <div className="flex items-center justify-between px-6 pt-6 pb-4">
             <button onClick={() => setFullScreen(false)} className="text-white p-2 -ml-2">
@@ -89,24 +96,34 @@ export default function Player() {
             </button>
           </div>
 
-          {/* Album art */}
-          <div className="flex-1 flex items-center justify-center px-10">
-            <div className={`relative w-full max-w-[340px] aspect-square ${isPlaying ? "animate-pulse-ring" : ""}`}>
-              <img
-                src={image}
-                alt={songName}
-                className={`w-full h-full object-cover rounded-lg shadow-2xl shadow-black/60 transition-transform duration-700 ${isPlaying ? "scale-100" : "scale-95"}`}
-              />
-              {isBuffering && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-lg">
-                  <div className="w-10 h-10 border-2 border-white/20 border-t-primary rounded-full animate-spin" />
-                </div>
-              )}
+          {/* Main Split Display (Art Left / Karaoke Right) */}
+          <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative z-10 w-full max-w-[1400px] mx-auto">
+            
+            {/* Album art */}
+            <div className="md:flex-1 flex items-center justify-center p-6 md:p-12 shrink-0 h-[35vh] md:h-auto">
+              <div className={`relative h-full aspect-square md:w-full md:h-auto md:max-w-[420px] ${isPlaying ? "animate-pulse-ring" : ""}`}>
+                <img
+                  src={image}
+                  alt={songName}
+                  className={`w-full h-full object-cover rounded-lg shadow-2xl shadow-black/60 transition-transform duration-700 ${isPlaying ? "scale-100" : "scale-95"}`}
+                />
+                {isBuffering && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-lg">
+                    <div className="w-10 h-10 border-2 border-white/20 border-t-primary rounded-full animate-spin" />
+                  </div>
+                )}
+              </div>
             </div>
+
+            {/* Karaoke Lyrics */}
+            <div className="flex-[1.2] relative pt-4 md:pt-0">
+                <KaraokeView />
+            </div>
+            
           </div>
 
           {/* Song info + controls */}
-          <div className="px-8 pb-10 space-y-5">
+          <div className="px-8 pb-10 space-y-5 relative z-10 w-full max-w-[1400px] mx-auto">
             {/* Title + like */}
             <div className="flex items-center justify-between">
               <div className="min-w-0 flex-1 mr-4">
@@ -138,25 +155,26 @@ export default function Player() {
                 className="w-16 h-16 rounded-full bg-white flex items-center justify-center hover:scale-105 transition-transform">
                 {isPlaying ? <Pause size={28} fill="black" className="text-black" /> : <Play size={28} fill="black" className="text-black ml-1" />}
               </button>
-              <button onClick={nextTrack} className="text-white p-2">
+              <button onClick={nextTrack} className="text-white p-2 z-10">
                 <SkipForward size={28} fill="currentColor" />
               </button>
-              <button onClick={toggleRepeat} className={`p-2 ${repeat !== "off" ? "text-primary" : "text-[#b3b3b3]"}`}>
+              <button onClick={toggleRepeat} className={`p-2 z-10 ${repeat !== "off" ? "text-primary" : "text-[#b3b3b3]"}`}>
                 {repeat === "one" ? <Repeat1 size={22} /> : <Repeat size={22} />}
               </button>
             </div>
+            
+            {/* Full Screen Volume Rocker (Desktop) */}
+            <div className="items-center justify-center gap-3 pt-4 w-full max-w-[280px] mx-auto z-10 hidden md:flex">
+              <button onClick={toggleMute} className="text-[#b3b3b3] hover:text-white transition-colors p-1.5 opacity-80 hover:opacity-100">
+                {isMuted || volume === 0 ? <VolumeX size={18} /> : volume < 0.5 ? <Volume1 size={18} /> : <Volume2 size={18} />}
+              </button>
+              <Slider value={[isMuted ? 0 : volume]} max={1} step={0.01} onValueChange={([v]) => setVolume(v)}
+                className="flex-1 [&_[data-slot=slider-track]]:h-1 [&_[data-slot=slider-track]]:bg-white/20 [&_[data-slot=slider-range]]:bg-white hover:[&_[data-slot=slider-range]]:bg-primary [&_[data-slot=slider-thumb]]:w-4 [&_[data-slot=slider-thumb]]:h-4 [&_[data-slot=slider-thumb]]:opacity-0 hover:[&_[data-slot=slider-thumb]]:opacity-100 [&_[data-slot=slider-thumb]]:bg-white [&_[data-slot=slider-thumb]]:border-0 shadow-lg" />
+            </div>
           </div>
         </div>
-      </>
-    );
-  }
-
-  // ─── Mini Player Bar ───
-  return (
-    <>
-      <audio ref={audioRef} onTimeUpdate={handleTimeUpdate} onLoadedMetadata={handleLoadedMetadata} onEnded={handleEnded} onWaiting={handleWaiting} onCanPlay={handleCanPlay} />
-
-      <div className="fixed bottom-4 left-4 right-4 md:left-1/2 md:-translate-x-1/2 md:w-[800px] h-[72px] md:h-[80px] neuglass rounded-2xl z-50">
+      ) : (
+      <div className="fixed bottom-[68px] left-2 right-2 md:bottom-6 md:left-1/2 md:-translate-x-1/2 md:w-[800px] h-[64px] md:h-[80px] neuglass rounded-2xl z-50">
         {/* Ambient background progress fill */}
         <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
           <div className="absolute top-0 left-0 bottom-0 bg-gradient-to-r from-primary/20 via-primary/5 to-transparent transition-all duration-200" style={{ width: `${progress}%` }} />
@@ -243,6 +261,7 @@ export default function Player() {
           </div>
         </div>
       </div>
+      )}
     </>
   );
 }
