@@ -2,6 +2,9 @@ import { create } from "zustand";
 import type { Song } from "./api";
 import { getBestDownloadUrl } from "./api";
 import { getDominantColor } from "./color";
+import { useLibraryStore } from "./libraryStore";
+import { getCachedAudioUrl } from "./offlineStore";
+import { Engine } from "./audioEngine";
 
 // ─── Liked Songs Store (persisted to localStorage) ───
 interface LikedState {
@@ -172,10 +175,16 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     const url = getBestDownloadUrl(song.downloadUrl);
     if (!url || !audioRef) return;
 
-    audioRef.src = url;
-    audioRef.play().catch(console.error);
+    // Check offline cache first
+    getCachedAudioUrl(song.id).then((cachedUrl) => {
+      audioRef.src = cachedUrl || url;
+      Engine.resume();
+      audioRef.play().catch(console.error);
+    });
 
-    useRecentStore.getState().addRecent(song);
+    try {
+      useRecentStore.getState().addRecent(song);
+    } catch {}
 
     const newState: Partial<PlayerState> = {
       currentSong: song,
@@ -190,6 +199,9 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     }
 
     set(newState);
+    
+    // Add to history
+    useLibraryStore.getState().addToHistory(song);
 
     // Fetch dominant color for visuals
     if (song.image && song.image.length > 0) {
@@ -215,6 +227,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       set({ isPlaying: false });
       import("./partyStore").then(({ usePartyStore }) => usePartyStore.getState().emitSync("pause"));
     } else {
+      Engine.resume();
       audioRef.play().catch(console.error);
       set({ isPlaying: true });
       import("./partyStore").then(({ usePartyStore }) => usePartyStore.getState().emitSync("play"));

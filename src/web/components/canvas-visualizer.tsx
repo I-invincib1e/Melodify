@@ -1,38 +1,24 @@
 import { useEffect, useRef } from "react";
 import { usePlayerStore } from "@/lib/store";
-
-// We keep audio stuff outside the component so it persists across renders without reconnecting
-let audioCtx: AudioContext | null = null;
-let analyser: AnalyserNode | null = null;
-let source: MediaElementAudioSourceNode | null = null;
+import { Engine } from "@/lib/audioEngine";
 
 export default function CanvasVisualizer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { audioRef, isPlaying } = usePlayerStore();
+  const { isPlaying, dominantColor } = usePlayerStore();
   const requestRef = useRef<number>();
 
   useEffect(() => {
-    if (!audioRef || !canvasRef.current) return;
-    
-    // Initialize Web Audio API once
-    if (!audioCtx) {
-      try {
-        const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-        audioCtx = new AudioContext();
-        analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 256;
-        source = audioCtx.createMediaElementSource(audioRef);
-        source.connect(analyser);
-        analyser.connect(audioCtx.destination);
-      } catch (e) {
-        console.warn("AudioContext already created or error:", e);
-      }
+    if (!Engine.ctx || !Engine.analyser) {
+        console.warn("Audio Engine not initialized globally yet.");
+        return;
     }
+    const analyser = Engine.analyser;
 
     const canvas = canvasRef.current;
+    if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    if (!ctx || !analyser) return;
-
+    if (!ctx) return;
+    
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
@@ -45,7 +31,7 @@ export default function CanvasVisualizer() {
       const width = canvas.width;
       const height = canvas.height;
 
-      analyser!.getByteFrequencyData(dataArray);
+      analyser.getByteFrequencyData(dataArray);
 
       ctx.clearRect(0, 0, width, height);
       
@@ -73,11 +59,11 @@ export default function CanvasVisualizer() {
     };
 
     if (isPlaying) {
-      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+      if (Engine.ctx && Engine.ctx.state === 'suspended') Engine.resume();
       draw();
     } else {
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
-      // Let it draw one idle frame
+      // Let it draw one idle frame to settle
       setTimeout(() => draw(), 50);
       setTimeout(() => { if (requestRef.current) cancelAnimationFrame(requestRef.current) }, 100);
     }
@@ -85,7 +71,7 @@ export default function CanvasVisualizer() {
     return () => {
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
-  }, [audioRef, isPlaying]);
+  }, [isPlaying, dominantColor]);
 
   return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-30 pointer-events-none mix-blend-screen" />;
 }

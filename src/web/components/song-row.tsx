@@ -3,6 +3,8 @@ import { getHighQualityImage, formatDuration, decodeHtml, formatPlayCount } from
 import type { Song } from "@/lib/api";
 import { usePlayerStore } from "@/lib/store";
 import LikeButton from "./like-button";
+import PlaylistMenu from "./playlist-menu";
+import DownloadButton from "./download-button";
 import Equalizer from "./equalizer";
 import { useLocation } from "wouter";
 
@@ -98,9 +100,11 @@ export default function SongRow({ song, index = 0, queue, showAlbumArt = true, s
         </span>
       )}
 
-      {/* Like */}
-      <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+      {/* Like, Playlist, Offline */}
+      <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5">
+        <DownloadButton song={song} />
         <LikeButton song={song} size={16} />
+        <PlaylistMenu song={song} />
       </div>
 
       {/* Duration */}

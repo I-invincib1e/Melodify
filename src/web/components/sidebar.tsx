@@ -1,13 +1,14 @@
 import { useLocation } from "wouter";
 import { Home, Search, Library, Heart, Clock, Music2, Users } from "lucide-react";
-import { useRecentStore, useLikedStore, usePlayerStore } from "@/lib/store";
+import { useLikedStore, usePlayerStore } from "@/lib/store";
+import { useLibraryStore } from "@/lib/libraryStore";
 import { usePartyStore } from "@/lib/partyStore";
 import { getHighQualityImage, decodeHtml } from "@/lib/api";
 import Equalizer from "./equalizer";
 
 export default function Sidebar() {
   const [location, setLocation] = useLocation();
-  const { recentSongs } = useRecentStore();
+  const { history: recentSongs, playlists } = useLibraryStore();
   const { likedSongs } = useLikedStore();
   const { currentSong, isPlaying, playSong } = usePlayerStore();
   const { roomId, hostParty, joinParty, leaveParty, partyUsers } = usePartyStore();
@@ -91,7 +92,10 @@ export default function Sidebar() {
             <Heart size={12} /> Liked
           </button>
           <button
-            className="px-3 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-white hover:bg-white/15 transition-colors flex items-center gap-1.5"
+            onClick={() => setLocation("/history")}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-colors ${
+              location === "/history" ? "bg-white text-black" : "bg-white/10 text-white hover:bg-white/15"
+            }`}
           >
             <Clock size={12} /> Recent
           </button>
@@ -114,6 +118,23 @@ export default function Sidebar() {
               </div>
             </button>
           )}
+
+          {/* Custom Playlists */}
+          {playlists.map(p => (
+            <button
+              key={p.id}
+              onClick={() => setLocation(`/my-playlist/${p.id}`)}
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-white/[0.07] transition-colors text-left"
+            >
+              <div className="w-10 h-10 rounded-md bg-[#282828] flex items-center justify-center shrink-0">
+                <Music2 size={16} className="text-[#a7a7a7]" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-white truncate">{p.name}</p>
+                <p className="text-[11px] text-[#a7a7a7]">{p.songs.length} songs</p>
+              </div>
+            </button>
+          ))}
 
           {/* Recently played */}
           {recentSongs.slice(0, 12).map((song) => {
