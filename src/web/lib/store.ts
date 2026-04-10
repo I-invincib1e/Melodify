@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import type { Song } from "./api";
 import { getBestDownloadUrl } from "./api";
+import { getDominantColor } from "./color";
 
 // ─── Liked Songs Store (persisted to localStorage) ───
 interface LikedState {
@@ -124,15 +125,16 @@ interface PlayerState {
   repeat: "off" | "one" | "all";
   audioRef: HTMLAudioElement | null;
   isBuffering: boolean;
+  dominantColor: { r: number; g: number; b: number } | null;
 
   setAudioRef: (ref: HTMLAudioElement) => void;
-  playSong: (song: Song, queue?: Song[], index?: number) => void;
+  playSong: (song: Song, queue?: Song[], index?: number, fromSync?: boolean) => void;
   togglePlay: () => void;
-  pause: () => void;
-  resume: () => void;
+  pause: (fromSync?: boolean) => void;
+  resume: (fromSync?: boolean) => void;
   nextTrack: () => void;
   prevTrack: () => void;
-  seekTo: (time: number) => void;
+  seekTo: (time: number, fromSync?: boolean) => void;
   setCurrentTime: (time: number) => void;
   setDuration: (duration: number) => void;
   setVolume: (volume: number) => void;
@@ -159,11 +161,13 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   repeat: "off",
   audioRef: null,
   isBuffering: false,
+  dominantColor: null,
 
   setAudioRef: (ref) => set({ audioRef: ref }),
   setBuffering: (v) => set({ isBuffering: v }),
 
-  playSong: (song, queue, index) => {
+  // Added fromSync signature updates to PlayerState
+  playSong: (song, queue, index, fromSync?: boolean) => {
     const { audioRef } = get();
     const url = getBestDownloadUrl(song.downloadUrl);
     if (!url || !audioRef) return;
@@ -171,7 +175,6 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     audioRef.src = url;
     audioRef.play().catch(console.error);
 
-    // Track in recent
     useRecentStore.getState().addRecent(song);
 
     const newState: Partial<PlayerState> = {
@@ -187,6 +190,21 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     }
 
     set(newState);
+
+    // Fetch dominant color for visuals
+    if (song.image && song.image.length > 0) {
+      const highResImg = song.image[song.image.length - 1].url;
+      getDominantColor(highResImg).then((color) => {
+        if (color) set({ dominantColor: color });
+        else set({ dominantColor: null });
+      });
+    }
+
+    if (!fromSync) {
+      import("./partyStore").then(({ usePartyStore }) => {
+        usePartyStore.getState().emitSync("change-song", { song });
+      });
+    }
   },
 
   togglePlay: () => {
@@ -194,20 +212,25 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     if (!audioRef) return;
     if (isPlaying) {
       audioRef.pause();
+      set({ isPlaying: false });
+      import("./partyStore").then(({ usePartyStore }) => usePartyStore.getState().emitSync("pause"));
     } else {
       audioRef.play().catch(console.error);
+      set({ isPlaying: true });
+      import("./partyStore").then(({ usePartyStore }) => usePartyStore.getState().emitSync("play"));
     }
-    set({ isPlaying: !isPlaying });
   },
 
-  pause: () => {
+  pause: (fromSync?: boolean) => {
     get().audioRef?.pause();
     set({ isPlaying: false });
+    if (!fromSync) import("./partyStore").then(({ usePartyStore }) => usePartyStore.getState().emitSync("pause"));
   },
 
-  resume: () => {
+  resume: (fromSync?: boolean) => {
     get().audioRef?.play().catch(console.error);
     set({ isPlaying: true });
+    if (!fromSync) import("./partyStore").then(({ usePartyStore }) => usePartyStore.getState().emitSync("play"));
   },
 
   nextTrack: () => {
@@ -228,7 +251,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     }
 
     const song = queue[nextIndex];
-    if (song) get().playSong(song, queue, nextIndex);
+    if (song) get().playSong(song, queue, nextIndex); // playSong handles sync broadcast
   },
 
   prevTrack: () => {
@@ -243,11 +266,12 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     if (song) get().playSong(song, queue, prevIndex);
   },
 
-  seekTo: (time) => {
+  seekTo: (time, fromSync?: boolean) => {
     const { audioRef } = get();
     if (audioRef) {
       audioRef.currentTime = time;
       set({ currentTime: time });
+      if (!fromSync) import("./partyStore").then(({ usePartyStore }) => usePartyStore.getState().emitSync("sync-time", { time }));
     }
   },
 

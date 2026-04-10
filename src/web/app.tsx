@@ -24,9 +24,9 @@ function ScrollToTop() {
 function App() {
   return (
     <Provider>
-      <div className="flex h-screen bg-black overflow-hidden">
+      <div className="flex h-screen overflow-hidden text-foreground">
         <Sidebar />
-        <main className="flex-1 overflow-y-auto bg-gradient-to-b from-[#1a1a1a]/60 to-[#121212] md:rounded-lg md:m-2 md:mb-0">
+        <main className="flex-1 overflow-y-auto relative z-0 md:rounded-lg md:m-2 md:mb-0">
           <ScrollToTop />
           <Switch>
             <Route path="/" component={HomePage} />

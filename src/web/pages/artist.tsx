@@ -66,7 +66,7 @@ export default function ArtistPage() {
           <ArrowLeft size={20} />
         </button>
         {image && <img src={image} alt={artist.name} className="w-full h-full object-cover" />}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-black/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-transparent via-black/50 to-transparent" />
         <div className="absolute bottom-4 left-4 md:bottom-6 md:left-6 right-4">
           {artist.isVerified && (
             <div className="flex items-center gap-1.5 text-xs mb-1.5">
@@ -85,7 +85,7 @@ export default function ArtistPage() {
         {/* Action bar */}
         <div className="flex items-center gap-4 py-5">
           <button onClick={playAll}
-            className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#1DB954] flex items-center justify-center hover:scale-105 transition-transform hover:bg-[#1ed760] shadow-lg shadow-[#1DB954]/20">
+            className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary flex items-center justify-center hover:scale-105 transition-transform hover:brightness-110 shadow-lg shadow-primary/20">
             <Play size={22} fill="black" className="text-black ml-0.5" />
           </button>
           <button onClick={shufflePlay}
@@ -149,7 +149,7 @@ export default function ArtistPage() {
               {image && (
                 <div className="h-32 overflow-hidden">
                   <img src={image} alt="" className="w-full h-full object-cover opacity-40" />
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#121212]" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-transparent" />
                 </div>
               )}
               <div className="p-5 text-sm text-[#b3b3b3] leading-relaxed space-y-3">

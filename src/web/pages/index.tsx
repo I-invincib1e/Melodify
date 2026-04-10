@@ -101,7 +101,7 @@ export default function HomePage() {
                 {decodeHtml(song.name)}
               </span>
               <div className="opacity-0 group-hover:opacity-100 transition-opacity pr-3">
-                <div className="w-8 h-8 rounded-full bg-[#1DB954] flex items-center justify-center shadow-lg">
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-lg">
                   <Play size={14} fill="black" className="text-black ml-0.5" />
                 </div>
               </div>

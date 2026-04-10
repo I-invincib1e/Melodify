@@ -189,7 +189,7 @@ export default function SearchPage() {
                         {topResult.type === "artist" ? "Artist" : topResult.description ? decodeHtml(topResult.description) : "Song"}
                       </p>
                       <div className="absolute right-4 bottom-4 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all">
-                        <div className="w-12 h-12 rounded-full bg-[#1DB954] flex items-center justify-center shadow-xl hover:scale-105">
+                        <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-xl hover:scale-105">
                           <Play size={22} fill="black" className="text-black ml-0.5" />
                         </div>
                       </div>

@@ -1,6 +1,7 @@
 import { useLocation } from "wouter";
-import { Home, Search, Library, Heart, Clock, Music2 } from "lucide-react";
+import { Home, Search, Library, Heart, Clock, Music2, Users } from "lucide-react";
 import { useRecentStore, useLikedStore, usePlayerStore } from "@/lib/store";
+import { usePartyStore } from "@/lib/partyStore";
 import { getHighQualityImage, decodeHtml } from "@/lib/api";
 import Equalizer from "./equalizer";
 
@@ -9,6 +10,16 @@ export default function Sidebar() {
   const { recentSongs } = useRecentStore();
   const { likedSongs } = useLikedStore();
   const { currentSong, isPlaying, playSong } = usePlayerStore();
+  const { roomId, hostParty, joinParty, leaveParty, partyUsers } = usePartyStore();
+
+  const handlePartyAction = () => {
+    if (roomId) leaveParty();
+    else {
+      const code = prompt("Enter Room Code to join, or leave blank to Host:");
+      if (code) joinParty(code.toUpperCase());
+      else hostParty();
+    }
+  };
 
   const navItems = [
     { icon: Home, label: "Home", path: "/" },
@@ -18,9 +29,9 @@ export default function Sidebar() {
   return (
     <aside className="hidden md:flex flex-col w-[280px] shrink-0 h-full gap-2 p-2">
       {/* Logo + Nav */}
-      <div className="bg-[#121212] rounded-lg px-4 py-5">
+      <div className="neuglass rounded-2xl px-4 py-5 shadow-none border-none">
         <div className="flex items-center gap-2.5 mb-6 px-1">
-          <div className="w-8 h-8 rounded-full bg-[#1DB954] flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0">
             <Music2 size={16} className="text-black" strokeWidth={2.5} />
           </div>
           <span className="text-[17px] font-bold tracking-tight">Melodify</span>
@@ -44,10 +55,26 @@ export default function Sidebar() {
             );
           })}
         </nav>
+
+        {/* Watch Party Quick Action */}
+        <div className="mt-4 pt-4 border-t border-white/5">
+          <button 
+            onClick={handlePartyAction}
+            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-md text-sm font-semibold transition-all duration-200 ${
+              roomId ? "bg-primary/20 text-primary shadow-[0_0_10px_var(--color-primary)]" : "bg-white/5 text-[#b3b3b3] hover:text-white hover:bg-white/10"
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <Users size={20} />
+              {roomId ? `Room: ${roomId}` : "Listen Along"}
+            </div>
+            {roomId && <span className="text-[10px] bg-primary text-black px-1.5 py-0.5 rounded-full">{partyUsers}</span>}
+          </button>
+        </div>
       </div>
 
       {/* Library */}
-      <div className="bg-[#121212] rounded-lg flex-1 overflow-hidden flex flex-col">
+      <div className="neuglass rounded-2xl flex-1 overflow-hidden flex flex-col shadow-none border-none">
         <div className="flex items-center gap-3 px-5 pt-4 pb-2 text-[#b3b3b3]">
           <Library size={20} />
           <span className="text-sm font-semibold">Your Library</span>
@@ -104,7 +131,7 @@ export default function Sidebar() {
                   loading="lazy"
                 />
                 <div className="min-w-0 flex-1">
-                  <p className={`text-sm font-medium truncate ${isCurrent ? "text-[#1DB954]" : "text-white"}`}>
+                  <p className={`text-sm font-medium truncate ${isCurrent ? "text-primary" : "text-white"}`}>
                     {decodeHtml(song.name)}
                   </p>
                   <p className="text-[11px] text-[#a7a7a7] truncate">
