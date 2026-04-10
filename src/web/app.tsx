@@ -11,6 +11,8 @@ import ArtistPage from "./pages/artist";
 import PlaylistPage from "./pages/playlist";
 import QueuePage from "./pages/queue";
 import LikedPage from "./pages/liked";
+import HistoryPage from "./pages/history";
+import MyPlaylistPage from "./pages/my-playlist";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -36,6 +38,8 @@ function App() {
             <Route path="/playlist/:id" component={PlaylistPage} />
             <Route path="/queue" component={QueuePage} />
             <Route path="/liked" component={LikedPage} />
+            <Route path="/history" component={HistoryPage} />
+            <Route path="/my-playlist/:id" component={MyPlaylistPage} />
             <Route>
               <div className="flex flex-col items-center justify-center h-[60vh] animate-fade-in">
                 <p className="text-2xl font-bold text-white mb-2">404</p>
