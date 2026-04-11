@@ -34,8 +34,12 @@ export default function OnboardingPage() {
   const [searchLoading, setSearchLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [, setLocation] = useLocation();
-  const { user, fetchPreferences } = useAuthStore();
+  const { user, loading, fetchPreferences } = useAuthStore();
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!loading && !user) setLocation("/auth");
+  }, [user, loading]);
 
   useEffect(() => {
     Promise.all(

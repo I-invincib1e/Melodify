@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { CreditCard as Edit2, LogOut, Settings, Heart, Music2, Clock, Loader as Loader2, Check, ChevronRight } from "lucide-react";
+import { CreditCard as Edit2, LogOut, Settings, Heart, Music2, Clock, Loader as Loader2, Check, ChevronRight, TriangleAlert as AlertTriangle } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/lib/authStore";
 import { useLikedStore } from "@/lib/store";
 import { useLibraryStore } from "@/lib/libraryStore";
+import { useToastStore } from "@/lib/toastStore";
 
 const GENRE_LABELS: Record<string, string> = {
   hindi: "Hindi", punjabi: "Punjabi", romantic: "Romantic", pop: "Pop",
@@ -24,6 +25,8 @@ export default function ProfilePage() {
   const [savingName, setSavingName] = useState(false);
   const [historyCount, setHistoryCount] = useState(0);
   const [likedCount, setLikedCount] = useState(0);
+  const [confirmSignOut, setConfirmSignOut] = useState(false);
+  const toast = useToastStore();
 
   useEffect(() => {
     if (!user) { setLocation("/auth"); return; }
@@ -41,6 +44,18 @@ export default function ProfilePage() {
     await fetchProfile();
     setSavingName(false);
     setEditingName(false);
+    toast.success("Profile name updated!");
+  }
+
+  async function handleSignOut() {
+    if (!confirmSignOut) {
+      setConfirmSignOut(true);
+      setTimeout(() => setConfirmSignOut(false), 3500);
+      return;
+    }
+    await signOut();
+    toast.info("Signed out. See you soon!");
+    setLocation("/");
   }
 
   if (!user) return null;
@@ -140,9 +155,19 @@ export default function ProfilePage() {
         </button>
       )}
 
-      <button onClick={async () => { await signOut(); setLocation("/auth"); }}
-        className="w-full flex items-center justify-center gap-2.5 px-5 py-3.5 bg-white/[0.04] border border-white/[0.06] rounded-xl text-sm font-semibold text-[#a7a7a7] hover:text-white hover:border-white/15 transition-all">
-        <LogOut size={16} /> Sign Out
+      <button
+        onClick={handleSignOut}
+        className={`w-full flex items-center justify-center gap-2.5 px-5 py-3.5 rounded-xl text-sm font-semibold transition-all ${
+          confirmSignOut
+            ? "bg-red-500/15 border border-red-500/30 text-red-400 animate-pulse"
+            : "bg-white/[0.04] border border-white/[0.06] text-[#a7a7a7] hover:text-white hover:border-white/15"
+        }`}
+      >
+        {confirmSignOut ? (
+          <><AlertTriangle size={16} /> Tap again to confirm</>
+        ) : (
+          <><LogOut size={16} /> Sign Out</>
+        )}
       </button>
     </div>
   );

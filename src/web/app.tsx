@@ -17,6 +17,7 @@ import AuthPage from "./pages/auth";
 import OnboardingPage from "./pages/onboarding";
 import ProfilePage from "./pages/profile";
 import LandingPage from "./pages/landing";
+import ToastContainer from "./components/toast-container";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -77,6 +78,7 @@ function App() {
   return (
     <Provider>
       <AppShell />
+      <ToastContainer />
     </Provider>
   );
 }
