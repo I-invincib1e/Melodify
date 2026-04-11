@@ -1,5 +1,5 @@
 import { Route, Switch, useLocation } from "wouter";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { Provider } from "./components/provider";
 import Sidebar from "./components/sidebar";
 import Player from "./components/player";
@@ -16,6 +16,7 @@ import MyPlaylistPage from "./pages/my-playlist";
 import AuthPage from "./pages/auth";
 import OnboardingPage from "./pages/onboarding";
 import ProfilePage from "./pages/profile";
+import LandingPage from "./pages/landing";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -26,7 +27,7 @@ function ScrollToTop() {
   return null;
 }
 
-const FULLSCREEN_ROUTES = ["/auth", "/onboarding"];
+const FULLSCREEN_ROUTES = ["/auth", "/onboarding", "/landing"];
 
 function AppShell() {
   const [location] = useLocation();
@@ -37,6 +38,7 @@ function AppShell() {
       <Switch>
         <Route path="/auth" component={AuthPage} />
         <Route path="/onboarding" component={OnboardingPage} />
+        <Route path="/landing" component={LandingPage} />
       </Switch>
     );
   }

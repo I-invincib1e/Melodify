@@ -236,6 +236,75 @@ img { transition: opacity 0.3s; }
   box-shadow: 0 0 8px var(--primary);
 }
 
+/* ─── Landing Page Animations ─── */
+@keyframes waveBar {
+  0%, 100% { transform: scaleY(0.15); }
+  50% { transform: scaleY(1); }
+}
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes blobMorph {
+  0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+  33% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+  66% { border-radius: 40% 60% 30% 70% / 40% 40% 60% 50%; }
+}
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+@keyframes borderGlow {
+  0%, 100% { box-shadow: 0 0 20px 0px rgba(29,185,84,0.2); }
+  50% { box-shadow: 0 0 40px 4px rgba(29,185,84,0.4); }
+}
+@keyframes typewriter {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0% 0 0); }
+}
+@keyframes cardFloat {
+  0%, 100% { transform: translateY(0px) rotate(var(--card-rot, 0deg)); }
+  50% { transform: translateY(-12px) rotate(var(--card-rot, 0deg)); }
+}
+@keyframes vinylSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes ripple {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+.wave-bar {
+  width: 4px;
+  border-radius: 2px;
+  transform-origin: bottom;
+  animation: waveBar var(--dur, 0.8s) ease-in-out infinite;
+}
+.animate-ticker { animation: ticker 28s linear infinite; }
+.animate-ticker-slow { animation: ticker 48s linear infinite; }
+.animate-blob { animation: blobMorph 8s ease-in-out infinite; }
+.animate-card-float { animation: cardFloat var(--dur, 4s) ease-in-out infinite; }
+.animate-vinyl { animation: vinylSpin 3s linear infinite; }
+.animate-border-glow { animation: borderGlow 3s ease-in-out infinite; }
+.animate-ripple { animation: ripple 2s ease-out infinite; }
+
+.reveal-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.reveal-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.landing-body { overflow-y: auto; overflow-x: hidden; height: 100%; }
+
 /* Explicit badge */
 .badge-explicit {
   display: inline-flex;
