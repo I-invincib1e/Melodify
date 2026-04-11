@@ -13,6 +13,7 @@ import QueuePage from "./pages/queue";
 import LikedPage from "./pages/liked";
 import HistoryPage from "./pages/history";
 import MyPlaylistPage from "./pages/my-playlist";
+import StatsPage from "./pages/stats";
 import AuthPage from "./pages/auth";
 import OnboardingPage from "./pages/onboarding";
 import ProfilePage from "./pages/profile";
@@ -58,6 +59,7 @@ function AppShell() {
           <Route path="/queue" component={QueuePage} />
           <Route path="/liked" component={LikedPage} />
           <Route path="/history" component={HistoryPage} />
+          <Route path="/stats" component={StatsPage} />
           <Route path="/my-playlist/:id" component={MyPlaylistPage} />
           <Route path="/profile" component={ProfilePage} />
           <Route>

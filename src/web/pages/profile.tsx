@@ -6,6 +6,7 @@ import { useAuthStore } from "@/lib/authStore";
 import { useLikedStore } from "@/lib/store";
 import { useLibraryStore } from "@/lib/libraryStore";
 import { useToastStore } from "@/lib/toastStore";
+import GlobalEqualizer from "@/components/global-equalizer";
 
 const GENRE_LABELS: Record<string, string> = {
   hindi: "Hindi", punjabi: "Punjabi", romantic: "Romantic", pop: "Pop",
@@ -154,6 +155,11 @@ export default function ProfilePage() {
           <ChevronRight size={16} className="text-[#1db954]" />
         </button>
       )}
+
+      {/* Embedded EQ Settings */}
+      <div className="mb-8">
+        <GlobalEqualizer />
+      </div>
 
       <button
         onClick={handleSignOut}

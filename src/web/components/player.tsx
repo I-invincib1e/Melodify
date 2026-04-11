@@ -4,7 +4,6 @@ import { getHighQualityImage, formatDuration, decodeHtml } from "@/lib/api";
 import { Slider } from "@/components/ui/slider";
 import LikeButton from "./like-button";
 import Equalizer from "./equalizer";
-import GlobalEqualizer from "./global-equalizer";
 import CanvasVisualizer from "./canvas-visualizer";
 import KaraokeView from "./karaoke-view";
 import { Engine } from "@/lib/audioEngine";
@@ -166,9 +165,8 @@ export default function Player() {
               </button>
             </div>
             
-            {/* Full Screen Volume Rocker & Equalizer (Desktop) */}
-            <div className="items-center justify-center gap-3 pt-4 w-full max-w-[320px] mx-auto z-10 hidden md:flex">
-              <GlobalEqualizer />
+            {/* Full Screen Volume Rocker (Desktop) */}
+            <div className="items-center justify-center gap-3 pt-4 w-full max-w-[280px] mx-auto z-10 hidden md:flex">
               <button onClick={toggleMute} className="text-[#b3b3b3] hover:text-white transition-colors p-1.5 opacity-80 hover:opacity-100">
                 {isMuted || volume === 0 ? <VolumeX size={18} /> : volume < 0.5 ? <Volume1 size={18} /> : <Volume2 size={18} />}
               </button>
@@ -254,7 +252,6 @@ export default function Player() {
             <button onClick={() => setLocation("/queue")} className="text-[#b3b3b3] hover:text-white transition-colors p-1.5">
               <ListMusic size={16} />
             </button>
-            <GlobalEqualizer />
             <button onClick={toggleMute} className="text-[#b3b3b3] hover:text-white transition-colors p-1.5">
               {isMuted || volume === 0 ? <VolumeX size={16} /> : volume < 0.5 ? <Volume1 size={16} /> : <Volume2 size={16} />}
             </button>

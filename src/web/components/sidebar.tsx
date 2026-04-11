@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { Hop as Home, Search, Library, Heart, Clock, Music2, Users, LogIn, ChevronRight, LogOut, Settings, X, Check } from "lucide-react";
+import { Hop as Home, Search, Library, Heart, Clock, Music2, Users, LogIn, ChevronRight, LogOut, Settings, X, Check, Sparkles } from "lucide-react";
 import { useLikedStore, usePlayerStore } from "@/lib/store";
 import { useLibraryStore } from "@/lib/libraryStore";
 import { usePartyStore } from "@/lib/partyStore";
@@ -213,6 +213,15 @@ export default function Sidebar() {
             }`}
           >
             <Clock size={12} /> Recent
+          </button>
+          <button
+            onClick={() => setLocation("/stats")}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-colors ${
+              location === "/stats" ? "bg-white text-black text-primary" : "bg-white/10 text-primary hover:bg-white/15"
+            }`}
+             title="Your Wrapped Stats"
+          >
+            <Sparkles size={12} /> Stats
           </button>
         </div>
 

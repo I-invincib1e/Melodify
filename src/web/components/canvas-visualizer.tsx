@@ -1,10 +1,11 @@
 import { useEffect, useRef } from "react";
-import { usePlayerStore } from "@/lib/store";
+import { usePlayerStore, useUIStore } from "@/lib/store";
 import { Engine } from "@/lib/audioEngine";
 
 export default function CanvasVisualizer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { isPlaying, dominantColor } = usePlayerStore();
+  const { isFullScreenPlayer } = useUIStore();
   const requestRef = useRef<number>();
 
   useEffect(() => {
@@ -58,7 +59,7 @@ export default function CanvasVisualizer() {
       }
     };
 
-    if (isPlaying) {
+    if (isPlaying && isFullScreenPlayer) {
       if (Engine.ctx && Engine.ctx.state === 'suspended') Engine.resume();
       draw();
     } else {
@@ -71,7 +72,7 @@ export default function CanvasVisualizer() {
     return () => {
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
-  }, [isPlaying, dominantColor]);
+  }, [isPlaying, dominantColor, isFullScreenPlayer]);
 
   return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-30 pointer-events-none mix-blend-screen" />;
 }
