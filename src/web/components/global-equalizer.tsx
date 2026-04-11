@@ -42,14 +42,18 @@ export default function GlobalEqualizer() {
   const names = ["Sub", "Bass", "Mid", "High", "Air"];
 
   return (
-    <div className="bg-white/[0.04] border border-white/[0.06] rounded-2xl p-6 w-full">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <SlidersHorizontal size={18} className="text-primary" />
-            <h2 className="text-lg font-bold text-white">Audio Equalizer</h2>
+    <div className="neuglass rounded-3xl p-6 sm:p-8 w-full transition-all duration-300">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between mb-10 gap-6">
+        <div className="shrink-0">
+          <div className="flex items-center gap-3 mb-1">
+            <div className="w-10 h-10 rounded-xl bg-[#1db954]/10 flex items-center justify-center">
+              <SlidersHorizontal size={20} className="text-[#1db954]" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white tracking-tight">Audio Engine</h2>
+              <p className="text-[10px] text-[#555] font-bold uppercase tracking-[0.2em]">Master 5-Band Tuning</p>
+            </div>
           </div>
-          <p className="text-xs text-[#a7a7a7] uppercase tracking-wider">Master 5-Band Tuning</p>
         </div>
         
         {/* Presets */}
@@ -58,31 +62,54 @@ export default function GlobalEqualizer() {
             <button
               key={preset}
               onClick={() => applyPreset(preset)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all border ${
-                activePreset === preset || (activePreset === "Custom" && preset === "Custom")
-                  ? "bg-primary text-black border-primary shadow-[0_0_10px_rgba(140,225,255,0.3)]"
-                  : "bg-white/[0.05] text-[#a7a7a7] border-white/[0.1] hover:text-white hover:border-white/[0.2]"
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+                activePreset === preset
+                  ? "bg-[#1db954] text-black border-[#1db954] shadow-[0_0_15px_rgba(29,185,84,0.4)]"
+                  : "bg-white/[0.03] text-[#a7a7a7] border-white/[0.05] hover:text-white hover:bg-white/[0.08]"
               }`}
             >
               {preset}
             </button>
           ))}
-          <div className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${activePreset === "Custom" ? "bg-white/10 text-white border-white/20" : "bg-transparent text-[#555] border-transparent"}`}>
-            Custom
-          </div>
+          {activePreset === "Custom" && (
+            <div className="px-4 py-2 rounded-xl text-xs font-bold bg-[#1db954]/10 text-[#1db954] border border-[#1db954]/20 animate-pulse">
+              Custom Tuning
+            </div>
+          )}
         </div>
       </div>
 
       {/* Sliders Container */}
-      <div className="flex justify-between md:justify-around h-48 px-2 md:px-8 mt-4">
+      <div className="flex justify-between md:justify-around h-56 px-2 md:px-4">
         {gains.map((gain, i) => (
-          <div key={i} className="flex flex-col items-center justify-between h-full">
-            <span className={`text-xs font-bold ${gain > 0 ? "text-primary" : gain < 0 ? "text-amber-400" : "text-[#555]"}`}>
+          <div key={i} className="flex flex-col items-center justify-between h-full group/fader">
+            <div className={`text-[13px] font-black tabular-nums transition-colors ${gain > 0 ? "text-[#1db954]" : gain < 0 ? "text-white/40" : "text-[#333]"}`}>
               {gain > 0 ? "+" : ""}{gain}
-            </span>
+            </div>
             
-            <div className="relative flex-1 w-8 my-3 group">
-              {/* Slider Input */}
+            <div className="relative flex-1 w-10 my-4 flex items-center justify-center">
+              {/* Vertical fill background track */}
+              <div className="absolute inset-y-0 w-2.5 bg-black/40 rounded-full border border-white/[0.05] overflow-hidden">
+                 {/* Up fill */}
+                 <div 
+                   className="absolute bottom-1/2 w-full transition-all duration-300 rounded-t-sm"
+                   style={{
+                     height: `${Math.max(0, gain) * 3.33}%`,
+                     backgroundColor: '#1db954',
+                     boxShadow: '0 0 15px rgba(29,185,84,0.6)'
+                   }}
+                 />
+                 {/* Down fill */}
+                 <div 
+                   className="absolute top-1/2 w-full transition-all duration-300 rounded-b-sm"
+                   style={{
+                     height: `${Math.max(0, -gain) * 3.33}%`,
+                     backgroundColor: 'rgba(255,255,255,0.1)'
+                   }}
+                 />
+              </div>
+
+              {/* Slider Input (Invisible overlay for interaction) */}
               <input 
                 type="range"
                 min="-15"
@@ -90,35 +117,22 @@ export default function GlobalEqualizer() {
                 step="1"
                 value={gain}
                 onChange={(e) => handleGainChange(i, parseInt(e.target.value))}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-2 bg-white/10 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-[3px] [&::-webkit-slider-thumb]:border-[#111] [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-125 transition-transform origin-center -rotate-90 z-10"
+                className="absolute w-40 h-10 opacity-0 cursor-ns-resize transition-all -rotate-90 z-20"
               />
               
-              {/* Vertical Fill Track via CSS trick mapping gain to height */}
-              <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-2 bg-black/40 rounded-full overflow-hidden pointer-events-none border border-white/5">
-                 <div 
-                   className="absolute bottom-1/2 w-full transition-all duration-300"
-                   style={{
-                     height: `${Math.max(0, gain) * 3.33}%`,
-                     backgroundColor: 'var(--primary)',
-                     boxShadow: '0 0 10px var(--primary)'
-                   }}
-                 />
-                 <div 
-                   className="absolute top-1/2 w-full transition-all duration-300"
-                   style={{
-                     height: `${Math.max(0, -gain) * 3.33}%`,
-                     backgroundColor: '#fbbf24'
-                   }}
-                 />
-              </div>
+              {/* Visual Knob */}
+              <div 
+                className="absolute w-5 h-5 bg-white rounded-md shadow-xl border-2 border-black z-10 transition-all duration-75 pointer-events-none group-hover/fader:scale-110"
+                style={{ bottom: `calc(${((gain + 15) / 30) * 100}% - 10px)` }}
+              />
 
               {/* Zero line marker */}
-              <div className="absolute top-1/2 left-0 right-0 h-[2px] bg-white/20 pointer-events-none drop-shadow-md z-0" />
+              <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-white/10 pointer-events-none z-0" />
             </div>
 
-            <div className="text-center mt-2">
-              <p className="text-[13px] font-bold text-white">{names[i]}</p>
-              <p className="text-[10px] text-[#727272] tracking-widest">{labels[i]}</p>
+            <div className="text-center mt-3">
+              <p className="text-[14px] font-black text-white group-hover/fader:text-[#1db954] transition-colors">{names[i]}</p>
+              <p className="text-[9px] text-[#555] font-bold uppercase tracking-widest">{labels[i]}Hz</p>
             </div>
           </div>
         ))}

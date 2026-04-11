@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { CreditCard as Edit2, LogOut, Settings, Heart, Music2, Clock, Loader as Loader2, Check, ChevronRight, TriangleAlert as AlertTriangle } from "lucide-react";
+import { CreditCard as Edit2, LogOut, Settings, Heart, Music2, Clock, Loader as Loader2, Check, ChevronRight, TriangleAlert as AlertTriangle, Sparkles, User } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/lib/authStore";
 import { useLikedStore } from "@/lib/store";
@@ -65,116 +65,164 @@ export default function ProfilePage() {
   const joinDate = user.created_at ? new Date(user.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" }) : "";
 
   return (
-    <div className="p-4 md:p-8 pb-32 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-white mb-8">Profile</h1>
+    <div className="min-h-full pb-64 overflow-x-hidden">
+      {/* Immersive Hero Header */}
+      <div className="relative h-[300px] w-full flex items-end px-6 md:px-12 pb-8 overflow-hidden">
+        {/* Dynamic Background Glow */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1db954]/20 to-transparent z-0" />
+        <div className="absolute -top-20 -right-20 w-96 h-96 bg-[#1db954]/10 blur-[120px] rounded-full z-0 animate-pulse" />
+        <div className="absolute top-1/2 left-0 w-64 h-64 bg-purple-500/10 blur-[100px] rounded-full z-0" />
 
-      <div className="bg-white/[0.04] border border-white/[0.06] rounded-2xl p-6 mb-5">
-        <div className="flex items-center gap-5 mb-6">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#1db954] to-[#0d7a37] flex items-center justify-center shrink-0 text-2xl font-bold text-black select-none">
-            {initials}
+        <div className="relative z-10 flex flex-col md:flex-row items-center md:items-end gap-6 md:gap-8 w-full max-w-5xl mx-auto">
+          <div className="relative group shrink-0">
+            <div className="w-32 h-32 md:w-44 md:h-44 rounded-full bg-gradient-to-br from-[#1db954] to-[#0d7a37] flex items-center justify-center text-4xl md:text-6xl font-black text-black shadow-2xl shadow-black/50 select-none border-4 border-white/10">
+              {initials}
+            </div>
+            <div className="absolute -bottom-2 -right-2 w-10 h-10 rounded-full bg-white flex items-center justify-center text-black border-4 border-[#121212] shadow-xl">
+              <Sparkles size={18} fill="black" />
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
+
+          <div className="flex-1 text-center md:text-left min-w-0">
+            <p className="text-[10px] md:text-xs font-black text-[#1db954] uppercase tracking-[0.3em] mb-2 drop-shadow-sm">Subscriber Profile</p>
             {editingName ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center md:justify-start gap-2 max-w-sm mx-auto md:mx-0">
                 <input value={newName} onChange={(e) => setNewName(e.target.value)} autoFocus
                   onKeyDown={(e) => { if (e.key === "Enter") saveDisplayName(); if (e.key === "Escape") setEditingName(false); }}
-                  className="flex-1 bg-white/[0.06] border border-white/[0.15] rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#1db954]/60" />
+                  className="w-full bg-white/[0.06] border border-white/[0.15] rounded-xl px-4 py-3 text-white text-xl font-bold focus:outline-none focus:border-[#1db954]" />
                 <button onClick={saveDisplayName} disabled={savingName}
-                  className="w-8 h-8 rounded-full bg-[#1db954] flex items-center justify-center shrink-0 hover:bg-[#1ed760] transition-colors">
-                  {savingName ? <Loader2 size={14} className="animate-spin text-black" /> : <Check size={14} className="text-black" strokeWidth={3} />}
+                  className="w-12 h-12 rounded-xl bg-[#1db954] flex items-center justify-center shrink-0 hover:scale-105 transition-transform">
+                  {savingName ? <Loader2 size={20} className="animate-spin text-black" /> : <Check size={20} className="text-black" strokeWidth={3} />}
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2 group">
-                <p className="text-xl font-bold text-white truncate">{profile?.display_name || user.email?.split("@")[0]}</p>
-                <button onClick={() => setEditingName(true)} className="opacity-0 group-hover:opacity-100 transition-opacity text-[#a7a7a7] hover:text-white"><Edit2 size={14} /></button>
+              <div className="flex items-center justify-center md:justify-start gap-4 group">
+                <h1 className="text-4xl md:text-7xl font-black text-white tracking-tighter truncate drop-shadow-lg">
+                  {profile?.display_name || user.email?.split("@")[0]}
+                </h1>
+                <button onClick={() => setEditingName(true)} className="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-full bg-white/5 hover:bg-white/10 text-white shadow-lg"><Edit2 size={18} /></button>
               </div>
             )}
-            <p className="text-sm text-[#a7a7a7] truncate mt-0.5">{user.email}</p>
-            {joinDate && <p className="text-xs text-[#555] mt-1">Member since {joinDate}</p>}
+            
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-6 gap-y-2 mt-4 text-sm font-medium text-[#a7a7a7]">
+              <span className="flex items-center gap-2 text-white">
+                <Music2 size={14} className="text-[#1db954]" /> {playlists.length} Playlists
+              </span>
+              <span className="flex items-center gap-2">
+                <Clock size={14} /> Joined {joinDate}
+              </span>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div className="grid grid-cols-3 gap-3">
+      <div className="max-w-5xl mx-auto px-6 mt-8 space-y-8">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
-            { icon: Heart, label: "Liked Songs", value: likedCount, path: "/liked" },
-            { icon: Music2, label: "Playlists", value: playlists.length, path: null },
-            { icon: Clock, label: "Plays", value: historyCount, path: "/history" },
-          ].map(({ icon: Icon, label, value, path }) => (
+            { icon: Heart, label: "Liked Songs", value: likedCount, path: "/liked", color: "text-rose-500" },
+            { icon: Music2, label: "Playlists Created", value: playlists.length, path: null, color: "text-[#1db954]" },
+            { icon: Clock, label: "Songs Played", value: historyCount, path: "/history", color: "text-blue-400" },
+          ].map(({ icon: Icon, label, value, path, color }) => (
             <button key={label} onClick={() => path && setLocation(path)}
-              className={`flex flex-col items-center gap-1.5 p-4 rounded-xl bg-white/[0.04] border border-white/[0.06] transition-all ${path ? "hover:bg-white/[0.08] cursor-pointer" : "cursor-default"}`}>
-              <Icon size={18} className="text-[#1db954]" />
-              <span className="text-lg font-bold text-white">{value.toLocaleString()}</span>
-              <span className="text-[11px] text-[#a7a7a7]">{label}</span>
+              className={`neuglass p-6 rounded-3xl flex items-center justify-between group transition-all duration-300 ${path ? "hover:translate-y-[-4px] hover:bg-white/[0.06]" : "cursor-default"}`}>
+              <div className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-2xl bg-white/[0.03] flex items-center justify-center ${color}`}>
+                  <Icon size={22} fill="currentColor" className="opacity-80" />
+                </div>
+                <div className="text-left">
+                  <p className="text-2xl font-black text-white leading-none">{value.toLocaleString()}</p>
+                  <p className="text-[11px] font-bold text-[#555] uppercase tracking-widest mt-1">{label}</p>
+                </div>
+              </div>
+              {path && <ChevronRight size={18} className="text-[#333] group-hover:text-white transition-colors" />}
             </button>
           ))}
         </div>
-      </div>
 
-      {preferences?.setup_complete && (
-        <div className="bg-white/[0.04] border border-white/[0.06] rounded-2xl p-6 mb-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-bold text-white uppercase tracking-wider">Your Taste</h2>
-            <button onClick={() => setLocation("/onboarding")} className="text-xs text-[#1db954] hover:underline flex items-center gap-1">
-              Edit <ChevronRight size={12} />
-            </button>
+        {/* Settings & Personalization Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-12">
+            <h2 className="text-xs font-black text-[#555] uppercase tracking-[0.4em] mb-4 pl-1">Personalization</h2>
           </div>
-          {preferences.genres.length > 0 && (
-            <div className="mb-4">
-              <p className="text-xs text-[#555] uppercase tracking-wider mb-2">Genres</p>
-              <div className="flex flex-wrap gap-2">
-                {preferences.genres.map((g) => (
-                  <span key={g} className="px-3 py-1.5 bg-[#1db954]/10 border border-[#1db954]/20 rounded-full text-xs font-semibold text-[#1db954]">{GENRE_LABELS[g] || g}</span>
-                ))}
+
+          {/* Preferences Card */}
+          <div className="lg:col-span-5 space-y-4">
+            {preferences?.setup_complete ? (
+              <div className="neuglass rounded-3xl p-8 relative overflow-hidden group h-full">
+                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                   <User size={120} />
+                </div>
+                
+                <div className="flex items-center justify-between mb-8">
+                  <h3 className="text-xl font-bold text-white">Your Taste</h3>
+                  <button onClick={() => setLocation("/onboarding")} className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-white hover:bg-[#1db954] hover:text-black transition-all">
+                    <Edit2 size={16} />
+                  </button>
+                </div>
+
+                <div className="space-y-6 relative z-10">
+                  {preferences.genres.length > 0 && (
+                    <div>
+                      <p className="text-[10px] font-black text-[#555] uppercase tracking-widest mb-3">Favorite Genres</p>
+                      <div className="flex flex-wrap gap-2">
+                        {preferences.genres.map((g) => (
+                          <span key={g} className="px-3 py-1.5 bg-[#1db954]/10 border border-[#1db954]/20 rounded-lg text-xs font-bold text-[#1db954]">{GENRE_LABELS[g] || g}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {preferences.artist_names.length > 0 && (
+                    <div>
+                      <p className="text-[10px] font-black text-[#555] uppercase tracking-widest mb-3">Top Artists</p>
+                      <div className="flex flex-wrap gap-2">
+                        {preferences.artist_names.map((name) => (
+                          <span key={name} className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs font-bold text-white hover:bg-white/10 transition-colors">{name}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-          {preferences.artist_names.length > 0 && (
-            <div>
-              <p className="text-xs text-[#555] uppercase tracking-wider mb-2">Favorite Artists</p>
-              <div className="flex flex-wrap gap-2">
-                {preferences.artist_names.map((name) => (
-                  <span key={name} className="px-3 py-1.5 bg-white/[0.06] border border-white/[0.08] rounded-full text-xs font-semibold text-white">{name}</span>
-                ))}
-              </div>
-            </div>
-          )}
+            ) : (
+              <button onClick={() => setLocation("/onboarding")}
+                className="neuglass w-full p-8 rounded-3xl text-left group hover:bg-[#1db954]/5 transition-colors h-full flex flex-col justify-center">
+                <div className="w-12 h-12 rounded-2xl bg-[#1db954]/10 flex items-center justify-center text-[#1db954] mb-4">
+                  <Settings size={24} />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">Configure Your Profile</h3>
+                <p className="text-sm text-[#a7a7a7] mb-6">Complete your taste setup to unlock personalized recommendations throughout the app.</p>
+                <div className="flex items-center gap-2 text-[#1db954] font-bold text-sm">
+                  Start Onboarding <ChevronRight size={16} />
+                </div>
+              </button>
+            )}
+          </div>
+
+          {/* Equalizer Column */}
+          <div className="lg:col-span-7">
+             <GlobalEqualizer />
+          </div>
         </div>
-      )}
 
-      {!preferences?.setup_complete && (
-        <button onClick={() => setLocation("/onboarding")}
-          className="w-full flex items-center justify-between px-5 py-4 bg-[#1db954]/10 border border-[#1db954]/25 rounded-2xl mb-5 hover:bg-[#1db954]/15 transition-colors">
-          <div className="flex items-center gap-3">
-            <Settings size={18} className="text-[#1db954]" />
-            <div className="text-left">
-              <p className="text-sm font-semibold text-white">Set up your taste</p>
-              <p className="text-xs text-[#a7a7a7]">Get personalized music recommendations</p>
-            </div>
-          </div>
-          <ChevronRight size={16} className="text-[#1db954]" />
-        </button>
-      )}
-
-      {/* Embedded EQ Settings */}
-      <div className="mb-8">
-        <GlobalEqualizer />
+        {/* Danger Zone */}
+        <div className="pt-8 border-t border-white/5">
+          <button
+            onClick={handleSignOut}
+            className={`w-full md:w-auto min-w-[200px] flex items-center justify-center gap-3 px-8 py-4 rounded-2xl text-sm font-black transition-all ${
+              confirmSignOut
+                ? "bg-red-500 text-white shadow-[0_0_20px_rgba(239,68,68,0.4)]"
+                : "bg-white/5 text-[#a7a7a7] hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 border border-transparent"
+            }`}
+          >
+            {confirmSignOut ? (
+              <><AlertTriangle size={18} /> Confirm Sign Out</>
+            ) : (
+              <><LogOut size={18} /> Disconnect Account</>
+            )}
+          </button>
+        </div>
       </div>
-
-      <button
-        onClick={handleSignOut}
-        className={`w-full flex items-center justify-center gap-2.5 px-5 py-3.5 rounded-xl text-sm font-semibold transition-all ${
-          confirmSignOut
-            ? "bg-red-500/15 border border-red-500/30 text-red-400 animate-pulse"
-            : "bg-white/[0.04] border border-white/[0.06] text-[#a7a7a7] hover:text-white hover:border-white/15"
-        }`}
-      >
-        {confirmSignOut ? (
-          <><AlertTriangle size={16} /> Tap again to confirm</>
-        ) : (
-          <><LogOut size={16} /> Sign Out</>
-        )}
-      </button>
     </div>
   );
 }

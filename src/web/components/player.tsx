@@ -63,8 +63,12 @@ export default function Player() {
     return (
       <>
         <audio ref={audioRef} />
-        <div className="fixed bottom-[72px] left-2 right-2 md:bottom-6 md:left-1/2 md:-translate-x-1/2 md:max-w-4xl h-[64px] md:h-[80px] neuglass rounded-2xl flex items-center justify-center z-50">
-          <p className="text-[#9ba1ad] text-sm font-medium">Search & play a song to get started</p>
+        {/* Sleek Floating Pill Empty State */}
+        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 px-6 py-3 neuglass rounded-full border border-white/5 flex items-center gap-3 z-50 animate-fade-in shadow-2xl">
+          <div className="w-2 h-2 rounded-full bg-[#1db954] animate-pulse" />
+          <p className="text-[#a7a7a7] text-xs font-bold tracking-wide uppercase">
+            Select a song to start listening
+          </p>
         </div>
       </>
     );
