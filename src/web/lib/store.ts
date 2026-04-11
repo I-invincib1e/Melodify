@@ -5,13 +5,15 @@ import { getDominantColor } from "./color";
 import { useLibraryStore } from "./libraryStore";
 import { getCachedAudioUrl } from "./offlineStore";
 import { Engine } from "./audioEngine";
+import { supabase } from "./supabase";
 
-// ─── Liked Songs Store (persisted to localStorage) ───
+// ─── Liked Songs Store (persisted to localStorage + Supabase when authed) ───
 interface LikedState {
   likedIds: Set<string>;
   likedSongs: Song[];
   isLiked: (id: string) => boolean;
   toggleLike: (song: Song) => void;
+  hydrateFromSupabase: (songs: Song[]) => void;
 }
 
 function loadLiked(): { ids: Set<string>; songs: Song[] } {
@@ -35,6 +37,12 @@ export const useLikedStore = create<LikedState>((set, get) => ({
   likedIds: initial.ids,
   likedSongs: initial.songs,
   isLiked: (id) => get().likedIds.has(id),
+
+  hydrateFromSupabase: (songs) => {
+    saveLiked(songs);
+    set({ likedIds: new Set(songs.map((s) => s.id)), likedSongs: songs });
+  },
+
   toggleLike: (song) => {
     const { likedIds, likedSongs } = get();
     if (likedIds.has(song.id)) {
@@ -42,11 +50,23 @@ export const useLikedStore = create<LikedState>((set, get) => ({
       const newIds = new Set(newSongs.map((s) => s.id));
       saveLiked(newSongs);
       set({ likedIds: newIds, likedSongs: newSongs });
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (!user) return;
+        supabase.from("liked_songs").delete().eq("user_id", user.id).eq("song_id", song.id).then(() => {});
+      });
     } else {
       const newSongs = [song, ...likedSongs];
       const newIds = new Set(newSongs.map((s) => s.id));
       saveLiked(newSongs);
       set({ likedIds: newIds, likedSongs: newSongs });
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (!user) return;
+        supabase.from("liked_songs").insert({
+          user_id: user.id,
+          song_id: song.id,
+          song_data: song as unknown as Record<string, unknown>,
+        }).then(() => {});
+      });
     }
   },
 }));
@@ -76,6 +96,14 @@ export const useRecentStore = create<RecentState>((set, get) => ({
     const updated = [song, ...current].slice(0, 30);
     saveRecent(updated);
     set({ recentSongs: updated });
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      supabase.from("listening_history").insert({
+        user_id: user.id,
+        song_id: song.id,
+        song_data: song as unknown as Record<string, unknown>,
+      }).then(() => {});
+    });
   },
 }));
 

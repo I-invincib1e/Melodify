@@ -1,8 +1,9 @@
 import { useLocation } from "wouter";
-import { Home, Search, Library, Heart, Clock, Music2, Users } from "lucide-react";
+import { Hop as Home, Search, Library, Heart, Clock, Music2, Users, LogIn, ChevronRight } from "lucide-react";
 import { useLikedStore, usePlayerStore } from "@/lib/store";
 import { useLibraryStore } from "@/lib/libraryStore";
 import { usePartyStore } from "@/lib/partyStore";
+import { useAuthStore } from "@/lib/authStore";
 import { getHighQualityImage, decodeHtml } from "@/lib/api";
 import Equalizer from "./equalizer";
 
@@ -12,6 +13,10 @@ export default function Sidebar() {
   const { likedSongs } = useLikedStore();
   const { currentSong, isPlaying, playSong } = usePlayerStore();
   const { roomId, hostParty, joinParty, leaveParty, partyUsers } = usePartyStore();
+  const { user, profile } = useAuthStore();
+
+  const initials = (profile?.display_name || user?.email || "?")
+    .split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
 
   const handlePartyAction = () => {
     if (roomId) leaveParty();
@@ -71,6 +76,32 @@ export default function Sidebar() {
             </div>
             {roomId && <span className="text-[10px] bg-primary text-black px-1.5 py-0.5 rounded-full">{partyUsers}</span>}
           </button>
+        </div>
+
+        {/* Auth Section */}
+        <div className="mt-3">
+          {user ? (
+            <button
+              onClick={() => setLocation("/profile")}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-semibold transition-all duration-200 ${
+                location === "/profile" ? "bg-white/10 text-white" : "text-[#b3b3b3] hover:text-white hover:bg-white/[0.06]"
+              }`}
+            >
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#1db954] to-[#0d7a37] flex items-center justify-center text-[10px] font-bold text-black shrink-0">
+                {initials}
+              </div>
+              <span className="flex-1 text-left truncate">{profile?.display_name || user.email?.split("@")[0]}</span>
+              <ChevronRight size={14} className="shrink-0 opacity-50" />
+            </button>
+          ) : (
+            <button
+              onClick={() => setLocation("/auth")}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-semibold text-[#b3b3b3] hover:text-white bg-white/[0.04] hover:bg-white/[0.08] transition-all duration-200"
+            >
+              <LogIn size={20} />
+              Sign In
+            </button>
+          )}
         </div>
       </div>
 
@@ -169,6 +200,14 @@ export default function Sidebar() {
             <div className="flex flex-col items-center justify-center text-center px-4 py-10">
               <p className="text-sm font-semibold text-white mb-1">Your library is empty</p>
               <p className="text-xs text-[#b3b3b3] mb-4">Start listening to fill it up</p>
+              {!user && (
+                <button
+                  onClick={() => setLocation("/auth")}
+                  className="px-4 py-1.5 bg-[#1db954] text-black rounded-full text-xs font-semibold hover:scale-105 transition-transform mb-2"
+                >
+                  Sign In
+                </button>
+              )}
               <button
                 onClick={() => setLocation("/search")}
                 className="px-4 py-1.5 bg-white text-black rounded-full text-xs font-semibold hover:scale-105 transition-transform"

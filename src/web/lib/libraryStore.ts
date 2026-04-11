@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Song } from "./api";
+import { supabase } from "./supabase";
 
 export interface CustomPlaylist {
   id: string;
@@ -43,31 +44,56 @@ export const useLibraryStore = create<LibraryState>()(
       
       clearHistory: () => set({ history: [] }),
       
-      createPlaylist: (name) => set((state) => ({
-        playlists: [
-          ...state.playlists,
-          { id: Math.random().toString(36).substring(2, 9), name, createdAt: Date.now(), songIds: [], songs: [] }
-        ]
-      })),
-      
-      deletePlaylist: (id) => set((state) => ({
-        playlists: state.playlists.filter(p => p.id !== id)
-      })),
-      
-      addToPlaylist: (playlistId, song) => set((state) => ({
-        playlists: state.playlists.map(p => {
-          if (p.id !== playlistId) return p;
-          if (p.songIds.includes(song.id)) return p; // prevent duplicates
-          return { ...p, songIds: [...p.songIds, song.id], songs: [...p.songs, song] };
-        })
-      })),
-      
-      removeFromPlaylist: (playlistId, songId) => set((state) => ({
-        playlists: state.playlists.map(p => {
-          if (p.id !== playlistId) return p;
-          return { ...p, songIds: p.songIds.filter(id => id !== songId), songs: p.songs.filter(s => s.id !== songId) };
-        })
-      }))
+      createPlaylist: (name) => {
+        const id = Math.random().toString(36).substring(2, 9);
+        set((state) => ({
+          playlists: [...state.playlists, { id, name, createdAt: Date.now(), songIds: [], songs: [] }]
+        }));
+        supabase.auth.getUser().then(({ data: { user } }) => {
+          if (!user) return;
+          supabase.from("playlists").insert({ id, owner_id: user.id, name }).then(() => {});
+        });
+      },
+
+      deletePlaylist: (id) => {
+        set((state) => ({ playlists: state.playlists.filter(p => p.id !== id) }));
+        supabase.auth.getUser().then(({ data: { user } }) => {
+          if (!user) return;
+          supabase.from("playlists").delete().eq("id", id).eq("owner_id", user.id).then(() => {});
+        });
+      },
+
+      addToPlaylist: (playlistId, song) => {
+        set((state) => ({
+          playlists: state.playlists.map(p => {
+            if (p.id !== playlistId) return p;
+            if (p.songIds.includes(song.id)) return p;
+            return { ...p, songIds: [...p.songIds, song.id], songs: [...p.songs, song] };
+          })
+        }));
+        supabase.auth.getUser().then(({ data: { user } }) => {
+          if (!user) return;
+          supabase.from("playlist_songs").insert({
+            playlist_id: playlistId,
+            song_id: song.id,
+            song_data: song as unknown as Record<string, unknown>,
+            position: 0,
+          }).then(() => {});
+        });
+      },
+
+      removeFromPlaylist: (playlistId, songId) => {
+        set((state) => ({
+          playlists: state.playlists.map(p => {
+            if (p.id !== playlistId) return p;
+            return { ...p, songIds: p.songIds.filter(id => id !== songId), songs: p.songs.filter(s => s.id !== songId) };
+          })
+        }));
+        supabase.auth.getUser().then(({ data: { user } }) => {
+          if (!user) return;
+          supabase.from("playlist_songs").delete().eq("playlist_id", playlistId).eq("song_id", songId).then(() => {});
+        });
+      }
     }),
     {
       name: "melodify-library-storage",

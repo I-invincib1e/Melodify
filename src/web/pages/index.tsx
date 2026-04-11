@@ -1,54 +1,17 @@
-import { useEffect, useState } from "react";
-import { searchSongs, searchAlbums, type Song, type Album, getHighQualityImage, decodeHtml } from "@/lib/api";
+import { searchSongs, getHighQualityImage, decodeHtml } from "@/lib/api";
 import { usePlayerStore, useRecentStore } from "@/lib/store";
+import { useAuthStore } from "@/lib/authStore";
+import { useRecommendations } from "@/lib/useRecommendations";
 import HorizontalScroll from "@/components/horizontal-scroll";
 import MusicCard from "@/components/music-card";
 import SongRow from "@/components/song-row";
-import { Play } from "lucide-react";
-
-const QUICK_ARTISTS = ["Arijit Singh", "Pritam", "Diljit Dosanjh", "AP Dhillon", "Shreya Ghoshal", "A.R. Rahman"];
-
-interface Section {
-  title: string;
-  subtitle?: string;
-  songs?: Song[];
-  albums?: Album[];
-}
+import { Play, Sparkles } from "lucide-react";
 
 export default function HomePage() {
-  const [sections, setSections] = useState<Section[]>([]);
-  const [trendingSongs, setTrendingSongs] = useState<Song[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { sections, trendingSongs, loading } = useRecommendations();
   const { playSong } = usePlayerStore();
   const { recentSongs } = useRecentStore();
-
-  useEffect(() => { loadHome(); }, []);
-
-  async function loadHome() {
-    try {
-      const [trending, arijit, punjabi, romantic, newAlbums, popularAlbums] = await Promise.all([
-        searchSongs("top bollywood hits", 0, 12),
-        searchSongs("Arijit Singh best", 0, 12),
-        searchSongs("Diljit Dosanjh punjabi", 0, 12),
-        searchSongs("romantic bollywood songs", 0, 12),
-        searchAlbums("bollywood 2025", 0, 12),
-        searchAlbums("Pritam", 0, 12),
-      ]);
-
-      setTrendingSongs(trending.results || []);
-      setSections([
-        { title: "Arijit Singh Essentials", subtitle: "His most iconic tracks", songs: arijit?.results },
-        { title: "New Releases", subtitle: "Fresh from the studio", albums: newAlbums?.results },
-        { title: "Punjabi Fire", subtitle: "Desi beats that hit different", songs: punjabi?.results },
-        { title: "Romantic Picks", subtitle: "For the feels", songs: romantic?.results },
-        { title: "Popular Albums", subtitle: "What everyone's listening to", albums: popularAlbums?.results },
-      ]);
-    } catch (err) {
-      console.error("Failed to load home:", err);
-    } finally {
-      setLoading(false);
-    }
-  }
+  const { user, profile, preferences } = useAuthStore();
 
   const greeting = () => {
     const h = new Date().getHours();
@@ -56,6 +19,11 @@ export default function HomePage() {
     if (h < 18) return "Good afternoon";
     return "Good evening";
   };
+
+  const displayName = profile?.display_name || user?.email?.split("@")[0] || "";
+  const quickArtists = preferences?.artist_names?.slice(0, 6) || [
+    "Arijit Singh", "Pritam", "Diljit Dosanjh", "AP Dhillon", "Shreya Ghoshal", "A.R. Rahman",
+  ];
 
   if (loading) {
     return (
@@ -81,12 +49,21 @@ export default function HomePage() {
 
   return (
     <div className="p-4 md:p-6 pb-32">
-      {/* Greeting */}
-      <h1 className="text-2xl md:text-3xl font-bold text-white mb-5 animate-slide-up">
-        {greeting()}
-      </h1>
+      <div className="flex items-start justify-between mb-5 animate-slide-up">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-white">
+            {greeting()}{displayName ? `, ${displayName}` : ""}
+          </h1>
+          {user && preferences?.setup_complete && (
+            <p className="text-xs text-[#a7a7a7] mt-1 flex items-center gap-1.5">
+              <Sparkles size={11} className="text-[#1db954]" />
+              Personalized for you
+            </p>
+          )}
+        </div>
+      </div>
 
-      {/* Quick picks — Spotify-style compact row cards */}
+      {/* Quick picks */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-8 stagger-children">
         {(recentSongs.length >= 6 ? recentSongs.slice(0, 6) : trendingSongs.slice(0, 6)).map((song) => {
           const img = getHighQualityImage(song.image);
@@ -112,7 +89,7 @@ export default function HomePage() {
 
       {/* Quick artist chips */}
       <div className="flex flex-wrap gap-2 mb-8 animate-fade-in">
-        {QUICK_ARTISTS.map((q) => (
+        {quickArtists.map((q) => (
           <button
             key={q}
             onClick={() => {
