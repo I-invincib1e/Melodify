@@ -60,10 +60,10 @@ export default function Sidebar() {
           onClick={() => setLocation("/landing")}
           className="flex items-center gap-2.5 mb-6 px-1 group"
         >
-          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0 group-hover:shadow-[0_0_12px_var(--color-primary)] transition-all">
+          <div className="w-8 h-8 rounded-full bg-[#1db954] flex items-center justify-center shrink-0 group-hover:shadow-[0_0_14px_rgba(29,185,84,0.5)] transition-all">
             <Music2 size={16} className="text-black" strokeWidth={2.5} />
           </div>
-          <span className="text-[17px] font-bold tracking-tight group-hover:text-primary transition-colors">Melodify</span>
+          <span className="text-[17px] font-bold tracking-tight group-hover:text-[#1db954] transition-colors">Melodify</span>
         </button>
 
         <nav className="flex flex-col gap-0.5">

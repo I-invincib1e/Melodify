@@ -47,7 +47,7 @@ function AppShell() {
   return (
     <div className="flex h-screen overflow-hidden text-foreground">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto relative z-0 md:rounded-lg md:m-2 md:mb-0">
+      <main className="flex-1 overflow-y-auto relative z-0 md:rounded-lg md:m-2 md:mb-0 pb-6 md:pb-0">
         <ScrollToTop />
         <Switch>
           <Route path="/" component={HomePage} />

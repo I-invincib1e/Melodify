@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/lib/authStore";
 import { useLikedStore } from "@/lib/store";
@@ -25,13 +25,16 @@ async function hydrateUserData(userId: string) {
 export function Provider({ children }: ProviderProps) {
   const { setSession, setLoading, fetchProfile, fetchPreferences } = useAuthStore();
   const [initialized, setInitialized] = useState(false);
+  const [showLoader, setShowLoader] = useState(true);
+
+  const handleLoaderDone = useCallback(() => setShowLoader(false), []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
 
-      const run = async () => {
+      (async () => {
         if (session) {
           try {
             await Promise.all([fetchProfile(), fetchPreferences()]);
@@ -39,8 +42,7 @@ export function Provider({ children }: ProviderProps) {
           } catch {}
         }
         setInitialized(true);
-      };
-      run();
+      })();
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -63,9 +65,12 @@ export function Provider({ children }: ProviderProps) {
     return () => subscription.unsubscribe();
   }, []);
 
-  if (!initialized) {
-    return <AppLoading />;
-  }
-
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      {showLoader && (
+        <AppLoading initialized={initialized} onDone={handleLoaderDone} />
+      )}
+    </>
+  );
 }

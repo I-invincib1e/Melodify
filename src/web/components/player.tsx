@@ -64,7 +64,7 @@ export default function Player() {
     return (
       <>
         <audio ref={audioRef} />
-        <div className="fixed bottom-4 left-4 right-4 md:left-1/2 md:-translate-x-1/2 md:max-w-4xl h-[72px] md:h-[80px] neuglass rounded-2xl flex items-center justify-center z-50">
+        <div className="fixed bottom-[72px] left-2 right-2 md:bottom-6 md:left-1/2 md:-translate-x-1/2 md:max-w-4xl h-[64px] md:h-[80px] neuglass rounded-2xl flex items-center justify-center z-50">
           <p className="text-[#9ba1ad] text-sm font-medium">Search & play a song to get started</p>
         </div>
       </>

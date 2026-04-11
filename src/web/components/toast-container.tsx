@@ -68,7 +68,7 @@ export default function ToastContainer() {
           to { width: 0%; }
         }
       `}</style>
-      <div className="fixed bottom-24 md:bottom-6 right-4 z-[9999] flex flex-col gap-3 items-end pointer-events-none">
+      <div className="fixed top-4 right-4 md:top-auto md:bottom-[108px] md:right-5 z-[9999] flex flex-col gap-3 items-end pointer-events-none">
         {toasts.map((t) => (
           <div key={t.id} className="pointer-events-auto relative overflow-hidden">
             <ToastItem toast={t} onRemove={() => remove(t.id)} />

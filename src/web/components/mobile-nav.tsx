@@ -1,5 +1,5 @@
 import { useLocation } from "wouter";
-import { Home, Search, Library, Heart } from "lucide-react";
+import { Hop as Home, Search, Library, Heart } from "lucide-react";
 
 export default function MobileNav() {
   const [location, setLocation] = useLocation();
@@ -11,8 +11,11 @@ export default function MobileNav() {
   ];
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 neuglass border-t border-white/5 z-[60] pb-safe">
-      <div className="flex items-center justify-around py-1.5">
+    <nav
+      className="md:hidden fixed bottom-0 left-0 right-0 neuglass border-t border-white/[0.06] z-[60]"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+    >
+      <div className="flex items-center justify-around py-2">
         {items.map(({ icon: Icon, label, path }) => {
           const isActive = location === path;
           return (
