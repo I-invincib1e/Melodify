@@ -1,57 +1,106 @@
-# 🎵 Melodify - Music Streaming App
+# Melodify
 
-<p align="center">
-  <b>A College Mini Project</b>
-</p>
+A music streaming web app built as a college mini project. Streams music via the JioSaavn API with real-time playback, playlist management, and synchronized listening parties.
 
-## 📖 Abstract / Objective
-Melodify is a robust, responsive web application designed for seamless music streaming. Built using modern web technologies, it demonstrates practical applications of frontend development, state management, and API integration. This project aims to recreate the core user experience of popular music platforms with features like playback control, real-time search, and playlist curation without requiring complex backend servers.
+## Tech Stack
 
-## 🧑‍🎓 Project Details
-- **Course Name:** [Insert Course Name / Code]
-- **Submitted By:** 
-  - [Student Name 1] - [Roll Number 1]
-  - [Student Name 2] - [Roll Number 2]
-- **Guided By:** [Professor's Name]
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 19, TypeScript, Tailwind CSS 4 |
+| State | Zustand |
+| Routing | Wouter |
+| Auth & DB | Supabase (email/password, PostgreSQL) |
+| Music API | JioSaavn (saavn.sumit.co) |
+| Party Sync | Socket.IO (Express server on port 3001) |
+| Build | Vite |
 
-## ✨ Features
-- **Global Search:** Search for songs, albums, and artists in real-time.
-- **Audio Player:** Full controls including play, pause, next, previous, shuffle, and repeat.
-- **Responsive Design:** Beautiful dark theme UI inspired by Spotify, optimized for both desktop and mobile.
-- **Queue Management:** Manage the current list of playing songs smoothly.
-- **Local Persistence:** Save liked songs to the browser's local storage.
+## Features
 
-## 🛠️ Technology Stack
-- **Frontend Framework:** React 19
-- **Styling:** Tailwind CSS
-- **State Management:** Zustand
-- **Routing:** Wouter
-- **Data Source:** JioSaavn free API
+- **Search** — songs, albums, artists, playlists via JioSaavn
+- **Player** — play/pause, skip, shuffle, repeat, volume, queue management
+- **Equalizer** — 5-band Web Audio API EQ (60Hz – 14kHz)
+- **Liked Songs** — synced to Supabase, fallback to localStorage
+- **Playlists** — create, edit, and manage personal playlists
+- **Listen History** — last 50 played tracks stored in Supabase
+- **Listening Party** — real-time synchronized playback via Socket.IO rooms
+- **Karaoke View** — synced lyrics display during playback
+- **Offline Support** — cached tracks via service worker / offline store
+- **Auth** — sign up / sign in with email + password; onboarding flow for genre/artist preferences
 
-## 🚀 How to Run Locally
+## Project Structure
+
+```
+src/web/
+├── pages/          # Route-level page components
+├── components/     # Shared UI components (player, sidebar, cards, etc.)
+├── lib/
+│   ├── api.ts          # JioSaavn API wrapper + TypeScript types
+│   ├── audioEngine.ts  # Web Audio API equalizer singleton
+│   ├── store.ts        # Player, queue, liked songs, UI state (Zustand)
+│   ├── authStore.ts    # Auth session + profile state (Supabase)
+│   ├── libraryStore.ts # Playlists + playlist songs state
+│   ├── partyStore.ts   # Listening party state (Socket.IO)
+│   ├── offlineStore.ts # Offline cache management
+│   └── supabase.ts     # Supabase client singleton
+server/
+└── server.js       # Express + Socket.IO party sync server (port 3001)
+supabase/
+└── migrations/     # Database schema migrations
+```
+
+## Database Schema
+
+| Table | Purpose |
+|-------|---------|
+| `profiles` | User display name and avatar, created on sign-up via trigger |
+| `user_preferences` | Onboarding data: genres, followed artists, setup status |
+| `playlists` | User-created playlists (public/private) |
+| `playlist_songs` | Songs within a playlist with position ordering |
+| `liked_songs` | Liked tracks stored as JSONB song data |
+| `listening_history` | Last 50 played tracks per user (auto-trimmed by trigger) |
+
+All tables have Row Level Security enabled — users can only access their own data.
+
+## Getting Started
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/en/) installed on your system.
 
-### Steps
-1. **Clone the repository**
+- Node.js 18+
+- A [Supabase](https://supabase.com) project
+
+### Setup
+
+1. Clone and install dependencies:
    ```bash
    git clone https://github.com/I-invincib1e/Melodify.git
    cd Melodify
-   ```
-
-2. **Install dependencies**
-   ```bash
    npm install
    ```
 
-3. **Start the development server**
+2. Copy `.env.example` to `.env` and fill in your Supabase credentials:
+   ```
+   VITE_SUPABASE_URL=https://your-project.supabase.co
+   VITE_SUPABASE_ANON_KEY=your-anon-key
+   ```
+
+3. Apply database migrations via the Supabase dashboard or CLI.
+
+4. Start the frontend:
    ```bash
    npm run dev
    ```
 
-4. **Verify**
-   Open `http://localhost:5173` (or the URL provided in the terminal) in your browser.
+5. (Optional) Start the party sync server:
+   ```bash
+   cd server && node server.js
+   ```
 
-## 📄 License
-This project is for educational purposes.
+## Project Details
+
+- **Course:** [Insert Course Name / Code]
+- **Submitted by:** [Student Names & Roll Numbers]
+- **Guided by:** [Professor's Name]
+
+---
+
+For educational purposes only.
