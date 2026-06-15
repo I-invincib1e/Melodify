@@ -9,6 +9,17 @@ import { useToastStore } from "@/lib/toastStore";
 import { getHighQualityImage, decodeHtml } from "@/lib/api";
 import Equalizer from "./equalizer";
 
+function LogoMark({ size = 28 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="20" r="20" fill="#1db954" />
+      <path d="M8.5 28 L8.5 13 L13.5 13 L20 22.5 L26.5 13 L31.5 13 L31.5 28 L27.5 28 L27.5 19.5 L21.2 28.2 L18.8 28.2 L12.5 19.5 L12.5 28 Z" fill="#0a0a0a" />
+      <rect x="16" y="30.5" width="3" height="2" rx="1" fill="#0a0a0a" />
+      <rect x="21" y="30.5" width="3" height="2" rx="1" fill="#0a0a0a" />
+    </svg>
+  );
+}
+
 export default function Sidebar() {
   const [location, setLocation] = useLocation();
   const { history: recentSongs, playlists } = useLibraryStore();
@@ -60,10 +71,15 @@ export default function Sidebar() {
           onClick={() => setLocation("/landing")}
           className="flex items-center gap-2.5 mb-6 px-1 group"
         >
-          <div className="w-8 h-8 rounded-full bg-[#1db954] flex items-center justify-center shrink-0 group-hover:shadow-[0_0_14px_rgba(29,185,84,0.5)] transition-all">
-            <Music2 size={16} className="text-black" strokeWidth={2.5} />
+          <div className="shrink-0 group-hover:drop-shadow-[0_0_8px_rgba(29,185,84,0.5)] transition-all">
+            <LogoMark size={28} />
           </div>
-          <span className="text-[17px] font-bold tracking-tight group-hover:text-[#1db954] transition-colors">Melodify</span>
+          <span
+            className="text-[17px] font-bold tracking-tight group-hover:text-[#1db954] transition-colors"
+            style={{ fontFamily: "Syne, system-ui, sans-serif" }}
+          >
+            Melodify
+          </span>
         </button>
 
         <nav className="flex flex-col gap-0.5">
