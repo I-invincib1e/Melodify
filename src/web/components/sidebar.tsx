@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { Hop as Home, Search, Library, Heart, Clock, Music2, Users, LogIn, ChevronRight, LogOut, Settings, X, Check } from "lucide-react";
+import { House as Home, Search, Library, Heart, Clock, Music2, Users, LogIn, ChevronRight, LogOut, Settings, X, Check } from "lucide-react";
 import { useLikedStore, usePlayerStore } from "@/lib/store";
 import { useLibraryStore } from "@/lib/libraryStore";
 import { usePartyStore } from "@/lib/partyStore";
